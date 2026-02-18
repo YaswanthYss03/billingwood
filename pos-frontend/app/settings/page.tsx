@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { FormSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/stores/auth';
 import { useTenantConfig } from '@/lib/useTenantConfig';
@@ -162,9 +163,7 @@ export default function SettingsPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
-          </div>
+          <FormSkeleton />
         </DashboardLayout>
       </ProtectedRoute>
     );

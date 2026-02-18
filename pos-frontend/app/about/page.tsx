@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/stores/auth';
 import { api } from '@/lib/api';
 import { 
@@ -70,8 +71,30 @@ export default function AboutPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
+          <div className="space-y-6">
+            <Skeleton className="h-9 w-48" />
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <Skeleton className="h-6 w-40" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <Skeleton className="h-6 w-40" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>

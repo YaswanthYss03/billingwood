@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { Plus, Edit, Trash2, FolderOpen, Power, X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -119,8 +120,16 @@ export default function CategoriesPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-10 w-36" />
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-32 w-full rounded-lg" />
+              ))}
+            </div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>

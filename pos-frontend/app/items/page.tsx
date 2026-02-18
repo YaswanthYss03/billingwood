@@ -6,8 +6,7 @@ import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { api } from '@/lib/api';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';import { TableSkeleton } from '@/components/ui/skeleton';import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { Plus, Edit, Trash2, Package, X, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -168,8 +167,12 @@ export default function ItemsPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="h-9 w-32 bg-gray-200 animate-pulse rounded" />
+              <div className="h-10 w-28 bg-gray-200 animate-pulse rounded" />
+            </div>
+            <TableSkeleton rows={8} />
           </div>
         </DashboardLayout>
       </ProtectedRoute>

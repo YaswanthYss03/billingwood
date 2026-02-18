@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/dashboard-layout';
 import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { TableSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { formatDateTime } from '@/lib/utils';
 import { TicketCheck, Clock, CheckCircle, Receipt, List, Grid, AlertCircle } from 'lucide-react';
@@ -231,8 +232,9 @@ export default function KOTPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
+          <div className="space-y-6">
+            <div className="h-9 w-48 bg-gray-200 animate-pulse rounded" />
+            <TableSkeleton rows={8} />
           </div>
         </DashboardLayout>
       </ProtectedRoute>

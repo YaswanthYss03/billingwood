@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { POSSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { useTenantConfig } from '@/lib/useTenantConfig';
@@ -525,9 +526,7 @@ export default function POSPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
-          </div>
+          <POSSkeleton />
         </DashboardLayout>
       </ProtectedRoute>
     );

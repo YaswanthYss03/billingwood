@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuthStore } from '@/stores/auth';
 
 export default function Home() {
@@ -20,7 +21,10 @@ export default function Home() {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="text-lg text-gray-900">Loading...</div>
+      <div className="space-y-4 text-center">
+        <Skeleton className="h-8 w-48 mx-auto" />
+        <Skeleton className="h-4 w-32 mx-auto" />
+      </div>
     </div>
   );
 }

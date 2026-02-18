@@ -6,9 +6,12 @@ import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { TableSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Package, AlertTriangle, Plus, X } from 'lucide-react';import { Input } from '@/components/ui/input';import toast from 'react-hot-toast';
+import { Package, AlertTriangle, Plus, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import toast from 'react-hot-toast';
 
 export default function InventoryPage() {
   const [inventory, setInventory] = useState<any[]>([]);
@@ -99,8 +102,9 @@ export default function InventoryPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
+          <div className="space-y-6">
+            <div className="h-9 w-32 bg-gray-200 animate-pulse rounded" />
+            <TableSkeleton rows={10} />
           </div>
         </DashboardLayout>
       </ProtectedRoute>

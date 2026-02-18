@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { ProtectedRoute } from '@/components/auth-provider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { DashboardSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth';
@@ -65,9 +66,7 @@ export default function DashboardPage() {
     return (
       <ProtectedRoute>
         <DashboardLayout>
-          <div className="flex items-center justify-center h-96">
-            <div className="text-lg text-gray-900">Loading...</div>
-          </div>
+          <DashboardSkeleton />
         </DashboardLayout>
       </ProtectedRoute>
     );
