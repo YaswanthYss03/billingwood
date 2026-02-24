@@ -38,6 +38,10 @@ export default function ItemsPage() {
     trackInventory: true,
     inventoryMode: 'AUTO',
   });
+  const [showStockModal, setShowStockModal] = useState(false);
+  const [stockItem, setStockItem] = useState<any>(null);
+  const [stockQuantity, setStockQuantity] = useState('');
+  const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadData();
@@ -52,6 +56,15 @@ export default function ItemsPage() {
       ]);
       setItems(itemsRes.data);
       setCategories(categoriesRes.data);
+      
+      // Load quantities for all items
+      const quantities: Record<string, number> = {};
+      for (const item of itemsRes.data) {
+        if (item.trackInventory && item.quantity !== null && item.quantity !== undefined) {
+          quantities[item.id] = Number(item.quantity);
+        }
+      }
+      setItemQuantities(quantities);
       
       // Load GST rates from settings or use defaults
       const loadedGstRates = settingsRes.data.settings.gstRates;
@@ -160,6 +173,30 @@ export default function ItemsPage() {
       loadData();
     } catch (error) {
       toast.error('Failed to delete item');
+    }
+  };
+
+  const handleOpenStockModal = (item: any) => {
+    setStockItem(item);
+    setStockQuantity('');
+    setShowStockModal(true);
+  };
+
+  const handleUpdateStock = async () => {
+    if (!stockItem || !stockQuantity || parseFloat(stockQuantity) <= 0) {
+      toast.error('Please enter a valid quantity');
+      return;
+    }
+
+    try {
+      await api.items.updateQuantity(stockItem.id, parseFloat(stockQuantity), true);
+      toast.success(`Added ${stockQuantity} ${stockItem.unit} to ${stockItem.name}`);
+      setShowStockModal(false);
+      setStockItem(null);
+      setStockQuantity('');
+      loadData();
+    } catch (error) {
+      toast.error('Failed to update stock');
     }
   };
 
@@ -362,6 +399,7 @@ export default function ItemsPage() {
                         <TableHead className="font-semibold">Category</TableHead>
                         <TableHead className="font-semibold">Pricing</TableHead>
                         <TableHead className="font-semibold">Stock Tracking</TableHead>
+                        <TableHead className="font-semibold">Quantity</TableHead>
                         <TableHead className="font-semibold">Status</TableHead>
                         <TableHead className="text-right font-semibold">Actions</TableHead>
                       </TableRow>
@@ -408,6 +446,18 @@ export default function ItemsPage() {
                             )}
                           </TableCell>
                           <TableCell>
+                            {item.trackInventory ? (
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-base text-gray-900">
+                                  {itemQuantities[item.id] !== undefined ? itemQuantities[item.id] : '0'}
+                                </span>
+                                <span className="text-sm text-gray-500">{item.unit}</span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm">N/A</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
                             <button
                               onClick={() => handleToggleStatus(item)}
                               className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold transition-all transform hover:scale-105 cursor-pointer shadow-sm ${
@@ -423,6 +473,15 @@ export default function ItemsPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex gap-2 justify-end">
+                              {item.trackInventory && (
+                                <button
+                                  onClick={() => handleOpenStockModal(item)}
+                                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                  title="Add stock"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </button>
+                              )}
                               <button
                                 onClick={() => handleEdit(item)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -472,6 +531,79 @@ export default function ItemsPage() {
             </Card>
           )}
         </div>
+
+        {/* Stock Update Modal */}
+        {showStockModal && stockItem && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl w-full max-w-md shadow-2xl">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">Add Stock</h2>
+                  <button
+                    onClick={() => setShowStockModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600">Item</p>
+                    <p className="text-lg font-semibold text-gray-900">{stockItem.name}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Current Stock: <span className="font-semibold text-gray-900">
+                        {itemQuantities[stockItem.id] || 0} {stockItem.unit}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                      Quantity to Add *
+                    </label>
+                    <Input
+                      type="number"
+                      min="0.001"
+                      step="any"
+                      value={stockQuantity}
+                      onChange={(e) => setStockQuantity(e.target.value)}
+                      placeholder={`Enter quantity in ${stockItem.unit}`}
+                      className="text-lg"
+                      autoFocus
+                    />
+                  </div>
+
+                  {stockQuantity && parseFloat(stockQuantity) > 0 && (
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600">New Total</p>
+                      <p className="text-2xl font-bold text-green-700">
+                        {(itemQuantities[stockItem.id] || 0) + parseFloat(stockQuantity)} {stockItem.unit}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowStockModal(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleUpdateStock}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Stock
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </DashboardLayout>
     </ProtectedRoute>
   );

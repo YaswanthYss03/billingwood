@@ -54,12 +54,19 @@ export class KotService {
   async create(tenantId: string, userId: string, createKotDto: CreateKotDto) {
     const kotNumber = await this.generateKotNumber(tenantId);
 
+    // Get user's location
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { locationId: true },
+    });
+
     const result = await this.prisma.executeInTransaction(async (tx) => {
       // Create KOT
       const kot = await tx.kOT.create({
         data: {
           tenantId,
           userId,
+          locationId: user?.locationId,
           kotNumber,
           tableNumber: createKotDto.tableNumber,
           notes: createKotDto.notes,
@@ -123,11 +130,12 @@ export class KotService {
   /**
    * Get all KOTs
    */
-  async findAll(tenantId: string, status?: KOTStatus) {
+  async findAll(tenantId: string, status?: KOTStatus, locationId?: string) {
     return this.prisma.kOT.findMany({
       where: {
         tenantId,
         ...(status && { status }),
+        ...(locationId && { locationId }),
       },
       include: {
         items: {

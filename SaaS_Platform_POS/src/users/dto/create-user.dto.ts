@@ -7,6 +7,11 @@ export class CreateUserDto {
   @IsUUID()
   tenantId: string;
 
+  @ApiPropertyOptional({ example: 'uuid-of-location', description: 'Optional location assignment - if not provided, user can access all locations' })
+  @IsOptional()
+  @IsUUID()
+  locationId?: string;
+
   @ApiProperty({ example: 'john_doe' })
   @IsString()
   username: string;

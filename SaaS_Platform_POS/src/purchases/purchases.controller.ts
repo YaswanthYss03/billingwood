@@ -16,8 +16,10 @@ import { ReceivePurchaseDto } from './dto/receive-purchase.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
+import { RequireFeature } from '../common/decorators/subscription.decorator';
 import { UserRole, PurchaseStatus } from '@prisma/client';
-import { CurrentTenant } from '../common/decorators/user.decorator';
+import { CurrentTenant, CurrentUserLocationId } from '../common/decorators/user.decorator';
 
 @ApiTags('purchases')
 @Controller('purchases')
@@ -34,13 +36,22 @@ export class PurchasesController {
   }
 
   @Post(':id/receive')
-  @ApiOperation({ summary: 'Receive purchase and create inventory batches' })
+  @ApiOperation({ summary: 'Receive purchase and create inventory batches (GRN)' })
   receivePurchase(
     @CurrentTenant() tenantId: string,
+    @CurrentUserLocationId() locationId: string,
     @Param('id') id: string,
     @Body() receivePurchaseDto: ReceivePurchaseDto,
   ) {
-    return this.purchasesService.receivePurchase(tenantId, id, receivePurchaseDto);
+    return this.purchasesService.receivePurchase(tenantId, id, receivePurchaseDto, locationId);
+  }
+
+  @Post(':id/send-order')
+  @UseGuards(SubscriptionGuard)
+  @RequireFeature('purchaseOrders')
+  @ApiOperation({ summary: 'Send purchase order to vendor (Professional Plan)' })
+  sendPurchaseOrder(@CurrentTenant() tenantId: string, @Param('id') id: string) {
+    return this.purchasesService.sendPurchaseOrder(tenantId, id);
   }
 
   @Get()

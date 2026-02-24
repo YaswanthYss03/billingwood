@@ -64,18 +64,36 @@ export const api = {
     list: (categoryId?: string) => 
       apiClient.get('/items', { params: { categoryId } }),
     get: (id: string) => apiClient.get(`/items/${id}`),
-    getStock: (id: string) => apiClient.get(`/items/${id}/stock`),
+    getStock: (id: string, locationId?: string) => 
+      apiClient.get(`/items/${id}/stock`, { params: { locationId } }),
+    updateQuantity: (id: string, quantity: number, isIncrement: boolean = true) =>
+      apiClient.patch(`/items/${id}/quantity`, { quantity, isIncrement }),
+    prepareDishes: (id: string, quantity: number) =>
+      apiClient.post(`/items/${id}/prepare`, { quantity }),
     create: (data: any) => apiClient.post('/items', data),
     update: (id: string, data: any) => apiClient.patch(`/items/${id}`, data),
     delete: (id: string) => apiClient.delete(`/items/${id}`),
     toggleStatus: (id: string) => apiClient.patch(`/items/${id}/toggle-status`),
   },
 
+  // Ingredients (Starter Plan - Simple Inventory)
+  ingredients: {
+    list: () => apiClient.get('/ingredients'),
+    get: (id: string) => apiClient.get(`/ingredients/${id}`),
+    create: (data: { name: string; unit: string }) => apiClient.post('/ingredients', data),
+    update: (id: string, data: { name?: string; unit?: string }) => apiClient.patch(`/ingredients/${id}`, data),
+    updateQuantity: (id: string, quantity: number, isIncrement: boolean = true) =>
+      apiClient.patch(`/ingredients/${id}/quantity`, { quantity, isIncrement }),
+    delete: (id: string) => apiClient.delete(`/ingredients/${id}`),
+    toggleStatus: (id: string) => apiClient.patch(`/ingredients/${id}/toggle-status`),
+  },
+
   // Inventory
   inventory: {
-    batches: (itemId?: string) => 
-      apiClient.get('/inventory/batches', { params: { itemId } }),
-    getStock: (itemId: string) => apiClient.get(`/inventory/stock/${itemId}`),
+    batches: (itemId?: string, locationId?: string) => 
+      apiClient.get('/inventory/batches', { params: { itemId, locationId } }),
+    getStock: (itemId: string, locationId?: string) => 
+      apiClient.get(`/inventory/stock/${itemId}`, { params: { locationId } }),
     valuation: () => apiClient.get('/inventory/valuation'),
     lowStock: (threshold?: number) => 
       apiClient.get('/inventory/low-stock', { params: { threshold } }),
@@ -137,6 +155,7 @@ export const api = {
     itemWiseSales: (startDate: string, endDate: string) => 
       apiClient.get('/reports/item-wise-sales', { params: { startDate, endDate } }),
     currentInventory: () => apiClient.get('/reports/current-inventory'),
+    ingredientInventory: () => apiClient.get('/reports/ingredient-inventory'),
     inventoryValuation: () => apiClient.get('/reports/inventory-valuation'),
     topSelling: (days?: number, limit?: number) => 
       apiClient.get('/reports/top-selling', { params: { days, limit } }),
@@ -158,5 +177,143 @@ export const api = {
     getSettings: () => apiClient.get('/tenants/settings'),
     updateSettings: (data: any) => apiClient.patch('/tenants/settings', data),
     update: (data: any) => apiClient.patch('/tenants', data),
+  },
+
+  // Subscription Management
+  subscription: {
+    getInfo: () => apiClient.get('/tenants/subscription/info'),
+    getPlans: () => apiClient.get('/tenants/subscription/plans'),
+    getUpgradeSuggestions: () => apiClient.get('/tenants/subscription/upgrade-suggestions'),
+    upgrade: (data: any) => apiClient.post('/tenants/subscription/upgrade', data),
+    cancel: (data: any) => apiClient.post('/tenants/subscription/cancel', data),
+    reactivate: () => apiClient.post('/tenants/subscription/reactivate'),
+  },
+
+  // Locations (Professional feature)
+  locations: {
+    list: (includeInactive?: boolean) => 
+      apiClient.get('/locations', { params: { includeInactive } }),
+    get: (id: string) => apiClient.get(`/locations/${id}`),
+    create: (data: any) => apiClient.post('/locations', data),
+    update: (id: string, data: any) => apiClient.put(`/locations/${id}`, data),
+    delete: (id: string) => apiClient.delete(`/locations/${id}`),
+    getReport: (locationId?: string, startDate?: string, endDate?: string) =>
+      apiClient.get('/locations/report', { params: { locationId, startDate, endDate } }),
+  },
+
+  // Stock Transfers (Professional feature)
+  stockTransfers: {
+    list: (locationId?: string, status?: string) =>
+      apiClient.get('/locations/transfers', { params: { locationId, status } }),
+    get: (id: string) => apiClient.get(`/locations/transfers/${id}`),
+    create: (data: any) => apiClient.post('/locations/transfers', data),
+    updateStatus: (id: string, status: string, notes?: string) =>
+      apiClient.put(`/locations/transfers/${id}/status`, { status, notes }),
+  },
+
+  // Customers (Professional feature)
+  customers: {
+    list: (params?: any) => apiClient.get('/customers', { params }),
+    get: (id: string) => apiClient.get(`/customers/${id}`),
+    findByPhone: (phone: string) => apiClient.get(`/customers/phone/${phone}`),
+    create: (data: any) => apiClient.post('/customers', data),
+    update: (id: string, data: any) => apiClient.put(`/customers/${id}`, data),
+    delete: (id: string) => apiClient.delete(`/customers/${id}`),
+    getInsights: () => apiClient.get('/customers/insights'),
+    getBirthdays: (daysAhead?: number) =>
+      apiClient.get('/customers/birthdays', { params: { daysAhead } }),
+  },
+
+  // Loyalty Program (Professional feature)
+  loyalty: {
+    earnPoints: (data: any) => apiClient.post('/customers/loyalty/earn', data),
+    redeemPoints: (data: any) => apiClient.post('/customers/loyalty/redeem', data),
+    adjustPoints: (data: any) => apiClient.post('/customers/loyalty/adjust', data),
+    getTransactions: (customerId: string) =>
+      apiClient.get(`/customers/${customerId}/loyalty/transactions`),
+  },
+
+  // Analytics (Professional feature)
+  analytics: {
+    revenueTrends: (startDate: string, endDate: string, groupBy?: 'day' | 'week' | 'month') =>
+      apiClient.get('/analytics/revenue-trends', { params: { startDate, endDate, groupBy } }),
+    profitMargin: (startDate: string, endDate: string) =>
+      apiClient.get('/analytics/profit-margin', { params: { startDate, endDate } }),
+    itemProfit: (startDate: string, endDate: string, limit?: number) =>
+      apiClient.get('/analytics/item-profit', { params: { startDate, endDate, limit } }),
+    peakHours: (days?: number) =>
+      apiClient.get('/analytics/peak-hours', { params: { days } }),
+    customerRetention: () => apiClient.get('/analytics/customer-retention'),
+    categoryPerformance: (startDate: string, endDate: string) =>
+      apiClient.get('/analytics/category-performance', { params: { startDate, endDate } }),
+    comparativeReports: () =>
+      apiClient.get('/analytics/comparative-reports'),
+    deadStock: (daysThreshold?: number) =>
+      apiClient.get('/analytics/dead-stock', { params: { daysThreshold } }),
+    abcAnalysis: (startDate: string, endDate: string) =>
+      apiClient.get('/analytics/abc-analysis', { params: { startDate, endDate } }),
+    seasonalTrends: (yearsBack?: number) =>
+      apiClient.get('/analytics/seasonal-trends', { params: { yearsBack } }),
+  },
+
+  // Vendors (Professional feature)
+  vendors: {
+    list: (includeInactive?: boolean) =>
+      apiClient.get('/vendors', { params: { includeInactive } }),
+    get: (id: string) => apiClient.get(`/vendors/${id}`),
+    getStats: (id: string) => apiClient.get(`/vendors/${id}/stats`),
+    create: (data: any) => apiClient.post('/vendors', data),
+    update: (id: string, data: any) => apiClient.patch(`/vendors/${id}`, data),
+    delete: (id: string) => apiClient.delete(`/vendors/${id}`),
+    toggleActive: (id: string) => apiClient.patch(`/vendors/${id}/toggle-active`),
+  },
+
+  // Smart Reordering (Professional feature)
+  reordering: {
+    alerts: () => apiClient.get('/inventory/reorder-alerts'),
+    salesVelocity: (itemId: string, days?: number) =>
+      apiClient.get(`/inventory/sales-velocity/${itemId}`, { params: { days } }),
+    suggestedQuantity: (itemId: string, daysOfSupply?: number) =>
+      apiClient.get(`/inventory/suggested-purchase/${itemId}`, { params: { daysOfSupply } }),
+  },
+
+  // Wastage Tracking (Professional feature)
+  wastage: {
+    list: (params?: { startDate?: string; endDate?: string; reason?: string }) =>
+      apiClient.get('/wastage', { params }),
+    create: (data: any) => apiClient.post('/wastage', data),
+    summary: (days?: number) =>
+      apiClient.get('/wastage/summary', { params: { days } }),
+    expiringItems: (daysThreshold?: number) =>
+      apiClient.get('/wastage/expiring', { params: { daysThreshold } }),
+    expiredItems: () => apiClient.get('/wastage/expired'),
+  },
+
+  // Recipe/BOM Management (Professional feature + RESTAURANT business type)
+  recipes: {
+    list: () => apiClient.get('/recipes'),
+    get: (id: string) => apiClient.get(`/recipes/${id}`),
+    getByFinishedGood: (finishedGoodId: string) =>
+      apiClient.get(`/recipes/finished-good/${finishedGoodId}`),
+    getCost: (id: string) => apiClient.get(`/recipes/${id}/cost`),
+    checkAvailability: (finishedGoodId: string, quantity: number) =>
+      apiClient.get(`/recipes/finished-good/${finishedGoodId}/check-availability`, { 
+        params: { quantity } 
+      }),
+    create: (data: any) => apiClient.post('/recipes', data),
+    update: (id: string, data: any) => apiClient.patch(`/recipes/${id}`, data),
+    delete: (id: string) => apiClient.delete(`/recipes/${id}`),
+  },
+
+  // Admin (SUPER_ADMIN only)
+  admin: {
+    getTenants: () => apiClient.get('/admin/tenants'),
+    createTenant: (data: any) => apiClient.post('/admin/tenants', data),
+    getTenantDetails: (id: string) => apiClient.get(`/admin/tenants/${id}`),
+    getStats: () => apiClient.get('/admin/stats'),
+    updateSubscription: (tenantId: string, data: any) =>
+      apiClient.patch(`/admin/tenants/${tenantId}/subscription`, data),
+    toggleTenantStatus: (tenantId: string) =>
+      apiClient.patch(`/admin/tenants/${tenantId}/toggle-status`),
   },
 };

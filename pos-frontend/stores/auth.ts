@@ -7,6 +7,7 @@ interface User {
   name: string;
   role: string;
   tenantId: string;
+  locationId?: string;
   username?: string;
 }
 
@@ -14,6 +15,8 @@ interface Tenant {
   id: string;
   name: string;
   businessType: string;
+  subscriptionPlan?: string;
+  subscriptionStatus?: string;
   settings?: any;
   createdAt?: string;
 }

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth';
 import { useTenantConfig } from '@/lib/useTenantConfig';
 import { PAGE_PERMISSIONS } from '@/lib/permissions';
+import { useSubscription } from '@/contexts/subscription-context';
 import {
   LayoutDashboard,
   Package,
@@ -21,6 +22,15 @@ import {
   ChevronRight,
   ClipboardList,
   FolderOpen,
+  MapPin,
+  UserCheck,
+  BarChart3,
+  Lock,
+  DollarSign,
+  Building2,
+  ChefHat,
+  Trash2,
+  Soup,
 } from 'lucide-react';
 
 const iconMap: Record<string, any> = {
@@ -31,10 +41,18 @@ const iconMap: Record<string, any> = {
   '/orders': ClipboardList,
   '/kot': TicketCheck,
   '/inventory': FileText,
+  '/ingredients': Soup,
+  '/vendors': Building2,
+  '/recipes': ChefHat,
+  '/wastage': Trash2,
   '/reports': TrendingUp,
   '/users': Users,
   '/settings': Settings,
   '/about': Info,
+  '/customers': UserCheck,
+  '/locations': MapPin,
+  '/analytics': BarChart3,
+  '/pricing': DollarSign,
 };
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -42,6 +60,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, logout, tenant } = useAuthStore();
   const { kotEnabled, canConfigureKOT } = useTenantConfig();
+  const { subscription, hasFeature } = useSubscription();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Initialize from localStorage
     if (typeof window !== 'undefined') {
@@ -74,13 +93,42 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         return false;
       }
 
+      // Filter Recipes - only for RESTAURANT, HOTEL, CAFE business types
+      if (page.path === '/recipes') {
+        const allowedTypes = ['RESTAURANT', 'HOTEL', 'CAFE'];
+        if (!tenant?.businessType || !allowedTypes.includes(tenant.businessType)) {
+          return false;
+        }
+      }
+
       return true;
     })
-    .map(page => ({
-      name: page.name,
-      href: page.path,
-      icon: iconMap[page.path] || LayoutDashboard,
-    }));
+    .map(page => {
+      // Determine if Professional feature is locked
+      let locked = false;
+      if (page.path === '/customers') {
+        locked = !hasFeature('customerDatabase');
+      } else if (page.path === '/locations') {
+        locked = !hasFeature('multiLocationManagement');
+      } else if (page.path === '/analytics') {
+        locked = !hasFeature('advancedAnalytics');
+      } else if (page.path === '/vendors') {
+        locked = !hasFeature('vendorManagement');
+      } else if (page.path === '/recipes') {
+        locked = !hasFeature('recipeManagement');
+      } else if (page.path === '/wastage') {
+        locked = !hasFeature('wastageTracking');
+      }
+
+      return {
+        name: page.name,
+        href: page.path,
+        icon: iconMap[page.path] || LayoutDashboard,
+        locked,
+      };
+    });
+
+  const allNavigation = navigation;
 
   const handleLogout = async () => {
     await logout();
@@ -91,7 +139,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div 
-        className={`bg-white shadow-lg transition-all duration-300 ease-in-out relative ${
+        className={`bg-white shadow-lg transition-all duration-300 ease-in-out relative flex flex-col ${
           isCollapsed ? 'w-20' : 'w-64'
         }`}
       >
@@ -108,7 +156,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           )}
         </button>
 
-        <div className="flex h-16 items-center justify-center border-b">
+        <div className="flex h-16 items-center justify-center border-b flex-shrink-0">
           {isCollapsed ? (
             <h1 className="text-xl font-bold text-blue-600">POS</h1>
           ) : (
@@ -118,7 +166,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Business Info */}
         {tenant && !isCollapsed && (
-          <div className="px-4 py-3 border-b flex items-center gap-2 flex-wrap">
+          <div className="px-4 py-3 border-b flex items-center gap-2 flex-wrap flex-shrink-0">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
               {tenant.businessType}
             </span>
@@ -130,8 +178,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         )}
 
-        <nav className="flex-1 space-y-1 px-2 py-4">
-          {navigation.map((item) => {
+        <nav className="flex-1 space-y-1 px-2 py-4 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {allNavigation.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
             
@@ -142,18 +190,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 className={`flex items-center ${isCollapsed ? 'justify-center px-2' : 'px-4'} py-3 text-sm font-medium rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-50 text-blue-700'
+                    : item.locked
+                    ? 'text-gray-400 hover:bg-gray-50'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 title={isCollapsed ? item.name : ''}
               >
                 <Icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
-                {!isCollapsed && item.name}
+                {!isCollapsed && (
+                  <span className="flex-1">{item.name}</span>
+                )}
+                {!isCollapsed && item.locked && (
+                  <Lock className="h-4 w-4 text-gray-400" />
+                )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t p-4">
+        <div className="border-t p-4 flex-shrink-0">
           {!isCollapsed ? (
             <>
               <div className="mb-3 px-4">

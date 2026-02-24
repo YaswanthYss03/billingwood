@@ -66,8 +66,8 @@ export default function AboutPage() {
   const subscriptionRenewalDate = new Date(subscriptionStartDate);
   subscriptionRenewalDate.setMonth(subscriptionRenewalDate.getMonth() + 1);
 
-  // Show loading state if auth is still loading or tenant data is not yet loaded or incomplete
-  if (authLoading || !tenant || !tenant.id) {
+  // Show loading state if auth is still loading or tenant data is not yet loaded
+  if (authLoading || !tenant) {
     return (
       <ProtectedRoute>
         <DashboardLayout>

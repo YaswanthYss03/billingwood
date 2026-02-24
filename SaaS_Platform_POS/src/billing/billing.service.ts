@@ -108,9 +108,10 @@ export class BillingService {
 
   /**
    * Create a new bill (FULLY TRANSACTIONAL with retry logic for bill number collision)
+   * LOCATION-AWARE: Bill is created at user's location, inventory deducted from same location
    */
-  async createBill(tenantId: string, userId: string, createBillDto: CreateBillDto) {
-    this.logger.log(`Creating bill for tenant ${tenantId} by user ${userId}`);
+  async createBill(tenantId: string, userId: string, locationId: string, createBillDto: CreateBillDto) {
+    this.logger.log(`Creating bill for tenant ${tenantId} by user ${userId} at location ${locationId}`);
 
     // Retry up to 3 times in case of bill number collision
     let retries = 0;
@@ -118,7 +119,7 @@ export class BillingService {
 
     while (retries < maxRetries) {
       try {
-        const bill = await this.createBillInternal(tenantId, userId, createBillDto);
+        const bill = await this.createBillInternal(tenantId, userId, locationId, createBillDto);
         
         // CRITICAL: Do NOT await - run in background
         setImmediate(() => this.clearDashboardCache(tenantId));
@@ -155,8 +156,9 @@ export class BillingService {
   /**
    * Internal method to create bill (used by createBill with retry logic)
    * ULTRA-OPTIMIZED: Single transaction, no pre/post fetches, <800ms target
+   * LOCATION-AWARE: Bill tagged with locationId, inventory deducted from same location only
    */
-  private async createBillInternal(tenantId: string, userId: string, createBillDto: CreateBillDto) {
+  private async createBillInternal(tenantId: string, userId: string, locationId: string, createBillDto: CreateBillDto) {
     const startTime = Date.now();
     this.logger.log('=== BILL CREATION STARTED (ULTRA-OPTIMIZED) ===');
 
@@ -178,6 +180,7 @@ export class BillingService {
         price: billItem.price,
         trackInventory: billItem.trackInventory,
         inventoryMode: billItem.inventoryMode,
+        isComposite: billItem.isComposite || false,
       },
     }));
 
@@ -209,6 +212,7 @@ export class BillingService {
         data: {
           tenantId,
           userId,
+          locationId,
           kotId: createBillDto.kotId || null,
           billNumber,
           subtotal: new Decimal(subtotal),
@@ -259,42 +263,87 @@ export class BillingService {
         orderBy: { createdAt: 'asc' },
       });
 
-      // 4. OPTIMIZED BULK INVENTORY DEDUCTION (inside transaction)
+      // 4. INVENTORY DEDUCTION - Plan-aware logic
       const itemsNeedingInventory = itemsData
         .filter(item => item.item.trackInventory && item.item.inventoryMode === 'AUTO')
-        .map(item => ({ itemId: item.itemId, quantity: item.quantity }));
+        .map(item => ({ itemId: item.itemId, quantity: item.quantity, isComposite: item.item.isComposite }));
+
+      const subscriptionPlan = createBillDto.subscriptionPlan || 'STARTER';
 
       if (itemsNeedingInventory.length > 0) {
-        // Single SELECT with FOR UPDATE SKIP LOCKED, bulk UPDATE with CASE WHEN
-        const bulkAllocations = await this.inventoryService.deductInventoryBulk(
-          tenantId,
-          itemsNeedingInventory,
-          inventoryMethod,
-          tx,
-        );
-
-        // Create bill item batch records (inventory audit trail)
-        const allBatchRecords: any[] = [];
-        
-        itemsData.forEach((itemData, index) => {
-          const billItem = createdBillItems[index];
-          const allocations = bulkAllocations.get(itemData.itemId);
+        if (subscriptionPlan === 'STARTER' || subscriptionPlan === 'FREE_TRIAL') {
+          // STARTER PLAN: Simple quantity-based deduction (no batch tracking)
+          this.logger.log(`Using Starter plan inventory deduction for ${itemsNeedingInventory.length} items`);
           
-          if (allocations && allocations.length > 0) {
-            const batchRecords = allocations.map(allocation => ({
-              billItemId: billItem.id,
-              batchId: allocation.batchId,
-              quantityUsed: new Decimal(allocation.quantityUsed),
-              costPrice: new Decimal(allocation.costPrice),
-            }));
-            allBatchRecords.push(...batchRecords);
+          for (const item of itemsNeedingInventory) {
+            await tx.item.update({
+              where: { id: item.itemId },
+              data: {
+                quantity: {
+                  decrement: new Decimal(item.quantity),
+                },
+              },
+            });
           }
-        });
+        } else {
+          // PROFESSIONAL/ENTERPRISE PLAN: Mixed deduction strategy
+          // - Composite items (recipes): Deduct from item.quantity (ingredients already deducted)
+          // - Non-composite items: Deduct from batches (raw materials)
+          this.logger.log(`Using Professional plan deduction for ${itemsNeedingInventory.length} items`);
+          
+          const compositeItems = itemsNeedingInventory.filter(item => item.isComposite);
+          const nonCompositeItems = itemsNeedingInventory.filter(item => !item.isComposite);
 
-        if (allBatchRecords.length > 0) {
-          await tx.billItemBatch.createMany({
-            data: allBatchRecords,
-          });
+          // Deduct composite items from item.quantity
+          if (compositeItems.length > 0) {
+            this.logger.log(`Deducting ${compositeItems.length} composite items from item.quantity`);
+            for (const item of compositeItems) {
+              await tx.item.update({
+                where: { id: item.itemId },
+                data: {
+                  quantity: {
+                    decrement: new Decimal(item.quantity),
+                  },
+                },
+              });
+            }
+          }
+
+          // Deduct non-composite items from batches (FIFO/Weighted Average)
+          if (nonCompositeItems.length > 0) {
+            this.logger.log(`Deducting ${nonCompositeItems.length} non-composite items from batches`);
+            const bulkAllocations = await this.inventoryService.deductInventoryBulk(
+              tenantId,
+              nonCompositeItems.map(item => ({ itemId: item.itemId, quantity: item.quantity })),
+              locationId,
+              inventoryMethod,
+              tx,
+            );
+
+            // Create bill item batch records (inventory audit trail)
+            const allBatchRecords: any[] = [];
+            
+            itemsData.forEach((itemData, index) => {
+              const billItem = createdBillItems[index];
+              const allocations = bulkAllocations.get(itemData.itemId);
+              
+              if (allocations && allocations.length > 0) {
+                const batchRecords = allocations.map(allocation => ({
+                  billItemId: billItem.id,
+                  batchId: allocation.batchId,
+                  quantityUsed: new Decimal(allocation.quantityUsed),
+                  costPrice: new Decimal(allocation.costPrice),
+                }));
+                allBatchRecords.push(...batchRecords);
+              }
+            });
+
+            if (allBatchRecords.length > 0) {
+              await tx.billItemBatch.createMany({
+                data: allBatchRecords,
+              });
+            }
+          }
         }
       }
 

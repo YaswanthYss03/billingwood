@@ -44,6 +44,7 @@ export class AuthService {
       email: (user as any).email,
       role: (user as any).role,
       tenantId: (user as any).tenantId,
+      locationId: (user as any).locationId,
       businessType: tenant?.businessType,
     };
 
@@ -65,6 +66,8 @@ export class AuthService {
           id: tenant?.id,
           name: tenant?.name,
           businessType: tenant?.businessType,
+          subscriptionPlan: tenant?.subscriptionPlan,
+          subscriptionStatus: tenant?.subscriptionStatus,
           settings: (tenant?.settings || {}) as any,
           createdAt: tenant?.createdAt,
         },
@@ -92,10 +95,13 @@ export class AuthService {
       name: (user as any).name,
       role: (user as any).role,
       tenantId: (user as any).tenantId,
+      locationId: (user as any).locationId,
       tenant: {
         id: tenant?.id,
         name: tenant?.name,
         businessType: tenant?.businessType,
+        subscriptionPlan: tenant?.subscriptionPlan,
+        subscriptionStatus: tenant?.subscriptionStatus,
         settings: tenant?.settings,
         createdAt: tenant?.createdAt,
       },
@@ -149,6 +155,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         tenantId: user.tenantId,
+        locationId: user.locationId,
       };
 
       const accessToken = this.jwtService.sign(payload);

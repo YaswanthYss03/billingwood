@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TableSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { formatDateTime } from '@/lib/utils';
-import { TicketCheck, Clock, CheckCircle, Receipt, List, Grid, AlertCircle } from 'lucide-react';
+import { TicketCheck, Clock, CheckCircle, Receipt, List, Grid, AlertCircle, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -68,6 +68,8 @@ export default function KOTPage() {
   const [filter, setFilter] = useState<string>('');
   const [viewMode, setViewMode] = useState<'kot' | 'batch'>('batch');
   const [sortBy, setSortBy] = useState<'quantity' | 'time' | 'category'>('quantity');
+  const [updatingKotId, setUpdatingKotId] = useState<string | null>(null);
+  const [notingByChef, setNotingByChef] = useState(false);
 
   useEffect(() => {
     loadKOTs();
@@ -89,12 +91,15 @@ export default function KOTPage() {
   };
 
   const updateStatus = async (id: string, status: string) => {
+    setUpdatingKotId(id);
     try {
       await api.kot.updateStatus(id, status);
       toast.success('KOT status updated');
-      loadKOTs();
+      await loadKOTs();
     } catch (error) {
       toast.error('Failed to update status');
+    } finally {
+      setUpdatingKotId(null);
     }
   };
 
@@ -106,6 +111,7 @@ export default function KOTPage() {
       return;
     }
 
+    setNotingByChef(true);
     try {
       // Update all pending KOTs to PREPARING in parallel
       await Promise.all(
@@ -113,9 +119,11 @@ export default function KOTPage() {
       );
       
       toast.success(`${pendingKots.length} order${pendingKots.length > 1 ? 's' : ''} acknowledged by chef`);
-      loadKOTs();
+      await loadKOTs();
     } catch (error) {
       toast.error('Failed to acknowledge orders');
+    } finally {
+      setNotingByChef(false);
     }
   };
 
@@ -381,9 +389,17 @@ export default function KOTPage() {
                             </div>
                             <Button
                               onClick={handleNotedByChef}
-                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 text-base"
+                              disabled={notingByChef}
+                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Noted by Chef
+                              {notingByChef ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                'Noted by Chef'
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -530,27 +546,52 @@ export default function KOTPage() {
                         <Button
                           size="sm"
                           onClick={() => updateStatus(kot.id, 'PREPARING')}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700"
+                          disabled={updatingKotId === kot.id}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <Clock className="mr-1 h-3 w-3" /> Start Preparing
+                          {updatingKotId === kot.id ? (
+                            <>
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Updating...
+                            </>
+                          ) : (
+                            <>
+                              <Clock className="mr-1 h-3 w-3" /> Start Preparing
+                            </>
+                          )}
                         </Button>
                       )}
                       {kot.status === 'PREPARING' && (
                         <Button
                           size="sm"
                           onClick={() => updateStatus(kot.id, 'READY')}
-                          className="flex-1 bg-green-600 hover:bg-green-700"
+                          disabled={updatingKotId === kot.id}
+                          className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <CheckCircle className="mr-1 h-3 w-3" /> Mark Ready
+                          {updatingKotId === kot.id ? (
+                            <>
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Updating...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="mr-1 h-3 w-3" /> Mark Ready
+                            </>
+                          )}
                         </Button>
                       )}
                       {kot.status === 'READY' && (
                         <Button
                           size="sm"
                           onClick={() => updateStatus(kot.id, 'SERVED')}
-                          className="flex-1"
+                          disabled={updatingKotId === kot.id}
+                          className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Mark Served
+                          {updatingKotId === kot.id ? (
+                            <>
+                              <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Updating...
+                            </>
+                          ) : (
+                            'Mark Served'
+                          )}
                         </Button>
                       )}
                       {kot.status === 'SERVED' && (

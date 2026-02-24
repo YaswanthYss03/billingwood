@@ -32,6 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       name: payload.name,
       role: payload.role,
       tenantId: payload.tenantId,
+      locationId: payload.locationId,
       tenant: {
         businessType: payload.businessType,
       },

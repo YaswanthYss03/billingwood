@@ -48,11 +48,24 @@ export class UsersService {
     return user;
   }
 
-  async findAll(tenantId: string) {
+  async findAll(tenantId: string, locationId?: string) {
+    const where: any = { tenantId, deletedAt: null };
+    
+    if (locationId) {
+      where.locationId = locationId;
+    }
+
     return this.prisma.user.findMany({
-      where: { tenantId, deletedAt: null },
+      where,
       include: {
         tenant: true,
+        location: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

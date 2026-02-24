@@ -49,8 +49,37 @@ export class ItemsController {
 
   @Get(':id/stock')
   @ApiOperation({ summary: 'Get current stock level for item' })
-  getCurrentStock(@CurrentTenant() tenantId: string, @Param('id') id: string) {
-    return this.itemsService.getCurrentStock(tenantId, id);
+  @ApiQuery({ name: 'locationId', required: false })
+  getCurrentStock(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Query('locationId') locationId?: string,
+  ) {
+    return this.itemsService.getCurrentStock(tenantId, id, locationId);
+  }
+
+  @Patch(':id/quantity')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @ApiOperation({ summary: 'Update item quantity (Starter Plan)' })
+  updateQuantity(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Body() body: { quantity: number; isIncrement?: boolean },
+  ) {
+    return this.itemsService.updateQuantity(tenantId, id, body.quantity, body.isIncrement ?? true);
+  }
+
+  @Post(':id/prepare')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @ApiOperation({ summary: 'Prepare dishes from ingredients (Professional Plan)' })
+  prepareDishes(
+    @CurrentTenant() tenantId: string,
+    @Param('id') id: string,
+    @Body() body: { quantity: number },
+  ) {
+    return this.itemsService.prepareDishes(tenantId, id, body.quantity);
   }
 
   @Patch(':id')

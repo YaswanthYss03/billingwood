@@ -1,18 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../common/services/prisma.service';
 import { RedisService } from '../common/services/redis.service';
+import { SubscriptionService } from '../common/services/subscription.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { UpgradePlanDto, CancelSubscriptionDto } from './dto/subscription.dto';
 import { Tenant } from '@prisma/client';
+import { SubscriptionPlan, SubscriptionStatus } from '../common/constants/subscription-plans';
 
 @Injectable()
 export class TenantsService {
   constructor(
     private prisma: PrismaService,
     private redis: RedisService,
+    private subscriptionService: SubscriptionService,
   ) {}
 
   async create(createTenantDto: CreateTenantDto) {
+    // Initialize with 7-day free trial of Professional features
+    const trial = this.subscriptionService.initializeTrial();
+    
     const tenant = await this.prisma.tenant.create({
       data: {
         name: createTenantDto.name,
@@ -24,6 +31,11 @@ export class TenantsService {
         inventoryMethod: createTenantDto.inventoryMethod || 'FIFO',
         currency: createTenantDto.currency || 'INR',
         timezone: createTenantDto.timezone || 'Asia/Kolkata',
+        // Subscription trial
+        subscriptionPlan: trial.subscriptionPlan,
+        subscriptionStatus: trial.subscriptionStatus,
+        trialStartDate: trial.trialStartDate,
+        trialEndDate: trial.trialEndDate,
       },
     });
 
@@ -125,5 +137,121 @@ export class TenantsService {
     }
 
     return tenant;
+  }
+
+  // ==========================================
+  // SUBSCRIPTION MANAGEMENT
+  // ==========================================
+
+  async upgradePlan(tenantId: string, dto: UpgradePlanDto) {
+    const tenant = await this.findOne(tenantId);
+
+    // Validate plan upgrade
+    if (tenant.subscriptionPlan === dto.targetPlan) {
+      throw new BadRequestException('Already on this plan');
+    }
+
+    // In production, integrate with payment gateway here
+    // For now, just update the subscription
+    const upgrade = this.subscriptionService.upgradeToPaidPlan(
+      dto.targetPlan,
+      dto.billingCycle,
+    );
+
+    const updated = await this.prisma.tenant.update({
+      where: { id: tenantId },
+      data: {
+        subscriptionPlan: upgrade.subscriptionPlan,
+        subscriptionStatus: upgrade.subscriptionStatus,
+        subscriptionStartDate: upgrade.subscriptionStartDate,
+        subscriptionEndDate: upgrade.subscriptionEndDate,
+        billingCycle: upgrade.billingCycle,
+      },
+    });
+
+    // Invalidate cache
+    await this.redis.del(`tenant:${tenantId}`);
+
+    return {
+      success: true,
+      message: `Successfully upgraded to ${dto.targetPlan} plan`,
+      subscription: this.subscriptionService.getSubscriptionInfo({
+        subscriptionPlan: updated.subscriptionPlan,
+        subscriptionStatus: updated.subscriptionStatus,
+        trialStartDate: updated.trialStartDate ?? undefined,
+        trialEndDate: updated.trialEndDate ?? undefined,
+        subscriptionStartDate: updated.subscriptionStartDate ?? undefined,
+        subscriptionEndDate: updated.subscriptionEndDate ?? undefined,
+      }),
+    };
+  }
+
+  async cancelSubscription(tenantId: string, dto: CancelSubscriptionDto) {
+    const tenant = await this.findOne(tenantId);
+
+    if (tenant.subscriptionStatus === SubscriptionStatus.CANCELLED) {
+      throw new BadRequestException('Subscription already cancelled');
+    }
+
+    const updated = await this.prisma.tenant.update({
+      where: { id: tenantId },
+      data: {
+        subscriptionStatus: SubscriptionStatus.CANCELLED,
+        // Store cancellation feedback
+        settings: {
+          ...(tenant.settings as any || {}),
+          cancellation: {
+            reason: dto.reason,
+            feedback: dto.feedback,
+            cancelledAt: new Date(),
+          },
+        },
+      },
+    });
+
+    // Invalidate cache
+    await this.redis.del(`tenant:${tenantId}`);
+
+    return {
+      success: true,
+      message: 'Subscription cancelled successfully',
+      accessUntil: tenant.subscriptionEndDate,
+    };
+  }
+
+  async reactivateSubscription(tenantId: string) {
+    const tenant = await this.findOne(tenantId);
+
+    if (tenant.subscriptionStatus !== SubscriptionStatus.CANCELLED) {
+      throw new BadRequestException('Subscription is not cancelled');
+    }
+
+    // Check if subscription has expired
+    if (tenant.subscriptionEndDate && new Date() > tenant.subscriptionEndDate) {
+      throw new BadRequestException('Subscription has expired. Please upgrade to a new plan.');
+    }
+
+    const updated = await this.prisma.tenant.update({
+      where: { id: tenantId },
+      data: {
+        subscriptionStatus: SubscriptionStatus.ACTIVE,
+      },
+    });
+
+    // Invalidate cache
+    await this.redis.del(`tenant:${tenantId}`);
+
+    return {
+      success: true,
+      message: 'Subscription reactivated successfully',
+      subscription: this.subscriptionService.getSubscriptionInfo({
+        subscriptionPlan: updated.subscriptionPlan,
+        subscriptionStatus: updated.subscriptionStatus,
+        trialStartDate: updated.trialStartDate ?? undefined,
+        trialEndDate: updated.trialEndDate ?? undefined,
+        subscriptionStartDate: updated.subscriptionStartDate ?? undefined,
+        subscriptionEndDate: updated.subscriptionEndDate ?? undefined,
+      }),
+    };
   }
 }

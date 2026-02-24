@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserRole, BillStatus } from '@prisma/client';
-import { CurrentTenant, CurrentUserId } from '../common/decorators/user.decorator';
+import { CurrentTenant, CurrentUserId, CurrentUserLocationId } from '../common/decorators/user.decorator';
 
 @ApiTags('billing')
 @Controller('billing')
@@ -32,9 +32,10 @@ export class BillingController {
   createBill(
     @CurrentTenant() tenantId: string,
     @CurrentUserId() userId: string,
+    @CurrentUserLocationId() locationId: string,
     @Body() createBillDto: CreateBillDto,
   ) {
-    return this.billingService.createBill(tenantId, userId, createBillDto);
+    return this.billingService.createBill(tenantId, userId, locationId, createBillDto);
   }
 
   @Post(':id/cancel')

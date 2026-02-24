@@ -12,9 +12,15 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 class PurchaseItemDto {
-  @ApiProperty({ example: 'uuid-of-item' })
+  @ApiPropertyOptional({ example: 'uuid-of-item', description: 'For finished goods' })
+  @IsOptional()
   @IsUUID()
-  itemId: string;
+  itemId?: string;
+
+  @ApiPropertyOptional({ example: 'uuid-of-ingredient', description: 'For raw materials' })
+  @IsOptional()
+  @IsUUID()
+  ingredientId?: string;
 
   @ApiProperty({ example: 100 })
   @Type(() => Number)
@@ -30,6 +36,11 @@ class PurchaseItemDto {
 }
 
 export class CreatePurchaseDto {
+  @ApiPropertyOptional({ example: 'uuid-of-vendor', description: 'Professional Plan: Link to vendor' })
+  @IsOptional()
+  @IsUUID()
+  vendorId?: string;
+
   @ApiPropertyOptional({ example: 'ABC Suppliers' })
   @IsOptional()
   @IsString()
@@ -44,6 +55,11 @@ export class CreatePurchaseDto {
   @IsOptional()
   @IsDateString()
   purchaseDate?: Date;
+
+  @ApiPropertyOptional({ example: '2024-02-20T10:00:00Z', description: 'Professional Plan: Expected delivery date' })
+  @IsOptional()
+  @IsDateString()
+  expectedDate?: Date;
 
   @ApiPropertyOptional({ example: 'Bulk order for inventory replenishment' })
   @IsOptional()

@@ -69,9 +69,15 @@ export class ReportsController {
   }
 
   @Get('current-inventory')
-  @ApiOperation({ summary: 'Get current inventory report' })
+  @ApiOperation({ summary: 'Get current inventory report (items only)' })
   getCurrentInventory(@CurrentTenant() tenantId: string) {
     return this.reportsService.getCurrentInventory(tenantId);
+  }
+
+  @Get('ingredient-inventory')
+  @ApiOperation({ summary: 'Get ingredient inventory report with batches' })
+  getIngredientInventory(@CurrentTenant() tenantId: string) {
+    return this.reportsService.getIngredientInventory(tenantId);
   }
 
   @Get('inventory-valuation')

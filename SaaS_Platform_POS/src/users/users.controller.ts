@@ -7,8 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -37,8 +38,12 @@ export class UsersController {
   @Roles(UserRole.OWNER, UserRole.MANAGER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users in tenant' })
-  findAll(@CurrentTenant() tenantId: string) {
-    return this.usersService.findAll(tenantId);
+  @ApiQuery({ name: 'locationId', required: false, description: 'Filter users by location ID' })
+  findAll(
+    @CurrentTenant() tenantId: string,
+    @Query('locationId') locationId?: string,
+  ) {
+    return this.usersService.findAll(tenantId, locationId);
   }
 
   @Get(':id')

@@ -23,12 +23,13 @@ interface CartItem {
   gstRate: number;
   trackInventory: boolean;
   inventoryMode: string;
+  isComposite?: boolean; // Professional plan: whether item is recipe-based
 }
 
 export default function POSPage() {
   const searchParams = useSearchParams();
   const { kotEnabled } = useTenantConfig();
-  const { tenant } = useAuthStore();
+  const { tenant, user } = useAuthStore();
   const isRestaurant = tenant?.businessType === 'RESTAURANT';
   const [categories, setCategories] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
@@ -217,7 +218,8 @@ export default function POSPage() {
         .filter((item: any) => item.trackInventory)
         .map(async (item: any) => {
           try {
-            const stockRes = await api.items.getStock(item.id);
+            // Pass user's locationId to get location-specific stock
+            const stockRes = await api.items.getStock(item.id, user?.locationId);
             return { itemId: item.id, stock: stockRes.data || 0 };
           } catch (error) {
             return { itemId: item.id, stock: 0 };
@@ -292,6 +294,7 @@ export default function POSPage() {
           gstRate: item.gstRate,
           trackInventory: item.trackInventory,
           inventoryMode: item.inventoryMode,
+          isComposite: item.isComposite || false,
         },
       ]);
     }
@@ -469,11 +472,13 @@ export default function POSPage() {
               trackInventory: item.trackInventory,
               inventoryMode: item.inventoryMode,
               itemName: item.name,
+              isComposite: item.isComposite || false, // Professional plan: recipe-based items
             };
           }),
           paymentMethod,
           orderType,
           inventoryMethod: (tenant as any)?.inventoryMethod || 'FIFO',
+          subscriptionPlan: (tenant as any)?.subscriptionPlan || 'STARTER',
           discount: discount || undefined,
           customerName: customerName || undefined,
           customerPhone: customerPhone || undefined,

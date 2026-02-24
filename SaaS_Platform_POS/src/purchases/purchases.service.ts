@@ -48,6 +48,21 @@ export class PurchasesService {
   async create(tenantId: string, createPurchaseDto: CreatePurchaseDto) {
     const purchaseNumber = await this.generatePurchaseNumber(tenantId);
 
+    // If vendorId provided, verify vendor exists (Professional Plan)
+    if (createPurchaseDto.vendorId) {
+      const vendor = await this.prisma.vendor.findFirst({
+        where: {
+          id: createPurchaseDto.vendorId,
+          tenantId,
+          isActive: true,
+        },
+      });
+
+      if (!vendor) {
+        throw new NotFoundException('Vendor not found or inactive');
+      }
+    }
+
     // Calculate total
     const totalAmount = createPurchaseDto.items.reduce((sum, item) => {
       return sum + item.quantity * item.costPrice;
@@ -59,9 +74,11 @@ export class PurchasesService {
         data: {
           tenantId,
           purchaseNumber,
+          vendorId: createPurchaseDto.vendorId, // Professional Plan
           supplierName: createPurchaseDto.supplierName,
           invoiceNumber: createPurchaseDto.invoiceNumber,
           purchaseDate: createPurchaseDto.purchaseDate || new Date(),
+          expectedDate: createPurchaseDto.expectedDate, // Professional Plan
           totalAmount: new Decimal(totalAmount),
           notes: createPurchaseDto.notes,
           status: 'DRAFT',
@@ -74,6 +91,7 @@ export class PurchasesService {
           data: {
             purchaseId: purchase.id,
             itemId: item.itemId,
+            ingredientId: item.ingredientId,
             quantity: new Decimal(item.quantity),
             costPrice: new Decimal(item.costPrice),
             totalCost: new Decimal(item.quantity * item.costPrice),
@@ -81,18 +99,63 @@ export class PurchasesService {
         });
       }
 
-      // Return with items
+      // Return with items and vendor (if linked)
       return tx.purchase.findUnique({
         where: { id: purchase.id },
         include: {
           items: {
             include: {
               item: true,
+              ingredient: true,
             },
           },
+          vendor: true, // Professional Plan
         },
       });
     });
+  }
+
+  /**
+   *Send purchase order to vendor (Professional Plan)
+   * Changes status from DRAFT to ORDERED
+   */
+  async sendPurchaseOrder(tenantId: string, purchaseId: string) {
+    const purchase = await this.prisma.purchase.findFirst({
+      where: { id: purchaseId, tenantId },
+      include: {
+        vendor: true,
+      },
+    });
+
+    if (!purchase) {
+      throw new NotFoundException(`Purchase with ID ${purchaseId} not found`);
+    }
+
+    if (purchase.status !== 'DRAFT') {
+      throw new BadRequestException(
+        `Cannot send purchase order. Current status: ${purchase.status}`,
+      );
+    }
+
+    const updated = await this.prisma.purchase.update({
+      where: { id: purchaseId },
+      data: {
+        status: 'ORDERED',
+        orderedDate: new Date(),
+      },
+      include: {
+        items: {
+          include: {
+            item: true,
+          },
+        },
+        vendor: true,
+      },
+    });
+
+    this.logger.log(`Purchase order ${purchase.purchaseNumber} sent to vendor`);
+
+    return updated;
   }
 
   /**
@@ -101,8 +164,7 @@ export class PurchasesService {
   async receivePurchase(
     tenantId: string,
     purchaseId: string,
-    receivePurchaseDto: ReceivePurchaseDto,
-  ) {
+    receivePurchaseDto: ReceivePurchaseDto,    locationId?: string,  ) {
     const purchase = await this.prisma.purchase.findFirst({
       where: { id: purchaseId, tenantId },
       include: {
@@ -114,8 +176,10 @@ export class PurchasesService {
       throw new NotFoundException(`Purchase with ID ${purchaseId} not found`);
     }
 
-    if (purchase.status !== 'DRAFT') {
-      throw new BadRequestException('Purchase has already been received or cancelled');
+    if (purchase.status !== 'DRAFT' && purchase.status !== 'ORDERED') {
+      throw new BadRequestException(
+        `Cannot receive purchase. Current status: ${purchase.status}`,
+      );
     }
 
     return this.prisma.executeInTransaction(async (tx) => {
@@ -128,7 +192,7 @@ export class PurchasesService {
         },
       });
 
-      // Create inventory batches for each item
+      // Create inventory batches for each item/ingredient
       for (const purchaseItem of purchase.items) {
         const batchNumber = `BATCH-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
 
@@ -136,7 +200,9 @@ export class PurchasesService {
           data: {
             tenantId,
             itemId: purchaseItem.itemId,
+            ingredientId: purchaseItem.ingredientId,
             purchaseId: purchase.id,
+            locationId, // Multi-location support
             batchNumber,
             initialQuantity: purchaseItem.quantity,
             currentQuantity: purchaseItem.quantity,
@@ -146,8 +212,10 @@ export class PurchasesService {
           },
         });
 
+        const entityType = purchaseItem.itemId ? 'item' : 'ingredient';
+        const entityId = purchaseItem.itemId || purchaseItem.ingredientId;
         this.logger.log(
-          `Created batch ${batchNumber} for item ${purchaseItem.itemId} with quantity ${purchaseItem.quantity}`,
+          `Created batch ${batchNumber} for ${entityType} ${entityId} with quantity ${purchaseItem.quantity}`,
         );
       }
 
@@ -157,9 +225,11 @@ export class PurchasesService {
           items: {
             include: {
               item: true,
+              ingredient: true,
             },
           },
           inventoryBatches: true,
+          vendor: true, // Professional Plan
         },
       });
     });
@@ -181,6 +251,7 @@ export class PurchasesService {
             item: true,
           },
         },
+        vendor: true, // Professional Plan
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -199,6 +270,7 @@ export class PurchasesService {
           },
         },
         inventoryBatches: true,
+        vendor: true, // Professional Plan
       },
     });
 

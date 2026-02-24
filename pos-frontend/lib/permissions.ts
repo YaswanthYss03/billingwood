@@ -1,5 +1,5 @@
 // Role-based permissions configuration
-export type UserRole = 'OWNER' | 'MANAGER' | 'CASHIER' | 'KITCHEN';
+export type UserRole = 'SUPER_ADMIN' | 'OWNER' | 'MANAGER' | 'CASHIER' | 'KITCHEN';
 
 export type PagePermission = {
   path: string;
@@ -8,6 +8,7 @@ export type PagePermission = {
 };
 
 export const PAGE_PERMISSIONS: PagePermission[] = [
+  { path: '/admin', roles: ['SUPER_ADMIN'], name: 'Admin Dashboard' },
   { path: '/dashboard', roles: ['OWNER', 'MANAGER', 'CASHIER', 'KITCHEN'], name: 'Dashboard' },
   { path: '/categories', roles: ['OWNER', 'MANAGER'], name: 'Categories' },
   { path: '/items', roles: ['OWNER', 'MANAGER', 'CASHIER'], name: 'Items' },
@@ -15,9 +16,17 @@ export const PAGE_PERMISSIONS: PagePermission[] = [
   { path: '/orders', roles: ['OWNER', 'MANAGER', 'CASHIER'], name: 'Orders' },
   { path: '/kot', roles: ['OWNER', 'MANAGER', 'CASHIER', 'KITCHEN'], name: 'KOT' },
   { path: '/inventory', roles: ['OWNER', 'MANAGER'], name: 'Inventory' },
+  { path: '/ingredients', roles: ['OWNER', 'MANAGER'], name: 'Ingredients' },
+  { path: '/vendors', roles: ['OWNER', 'MANAGER'], name: 'Vendors' },
+  { path: '/recipes', roles: ['OWNER', 'MANAGER'], name: 'Recipes' },
+  { path: '/wastage', roles: ['OWNER', 'MANAGER'], name: 'Wastage' },
   { path: '/reports', roles: ['OWNER', 'MANAGER'], name: 'Reports' },
   { path: '/users', roles: ['OWNER'], name: 'Users' },
   { path: '/settings', roles: ['OWNER'], name: 'Settings' },
+  { path: '/pricing', roles: ['OWNER', 'MANAGER', 'CASHIER', 'KITCHEN'], name: 'Pricing' },
+  { path: '/customers', roles: ['OWNER', 'MANAGER', 'CASHIER'], name: 'Customers' },
+  { path: '/locations', roles: ['OWNER', 'MANAGER'], name: 'Locations' },
+  { path: '/analytics', roles: ['OWNER', 'MANAGER'], name: 'Analytics' },
   { path: '/about', roles: ['OWNER', 'MANAGER', 'CASHIER', 'KITCHEN'], name: 'About' },
 ];
 
@@ -38,6 +47,8 @@ export function hasPageAccess(userRole: string | undefined, pagePath: string): b
  */
 export function getDefaultPageForRole(role: UserRole): string {
   switch (role) {
+    case 'SUPER_ADMIN':
+      return '/admin';
     case 'OWNER':
     case 'MANAGER':
       return '/dashboard';

@@ -14,6 +14,15 @@ import { PrintingModule } from './printing/printing.module';
 import { ReportsModule } from './reports/reports.module';
 import { AuditModule } from './audit/audit.module';
 import { CommonModule } from './common/common.module';
+import { IngredientsModule } from './ingredients/ingredients.module';
+// Professional Plan Features
+import { LocationsModule } from './locations/locations.module';
+import { CustomersModule } from './customers/customers.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { VendorsModule } from './vendors/vendors.module';
+import { RecipesModule } from './recipes/recipes.module';
+import { WastageModule } from './wastage/wastage.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -36,12 +45,21 @@ import { CommonModule } from './common/common.module';
     TenantsModule,
     ItemsModule,
     InventoryModule,
+    IngredientsModule,
     PurchasesModule,
     BillingModule,
     KotModule,
     PrintingModule,
     ReportsModule,
     AuditModule,
+    // Professional Plan Features
+    LocationsModule,
+    CustomersModule,
+    AnalyticsModule,
+    VendorsModule,
+    RecipesModule,
+    WastageModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [],

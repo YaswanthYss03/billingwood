@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { ProtectedRoute } from '@/components/auth-provider';
+import { SubscriptionWidget } from '@/components/subscription-widget';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { DashboardSkeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
@@ -75,21 +76,23 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <DashboardLayout>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <button
-              onClick={() => loadMetrics(true)}
-              disabled={refreshing}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
-          </div>
+        <div className="flex gap-6">
+          {/* Main Content Area */}
+          <div className="flex-1 space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+              <button
+                onClick={() => loadMetrics(true)}
+                disabled={refreshing}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
+              </button>
+            </div>
 
-          {/* Metrics Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* Metrics Grid */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
@@ -268,6 +271,14 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
+
+        {/* Sidebar with Subscription Widget */}
+        <div className="w-full lg:w-96 flex-shrink-0">
+          <div className="sticky top-6">
+            <SubscriptionWidget />
+          </div>
+        </div>
+      </div>
       </DashboardLayout>
     </ProtectedRoute>
   );

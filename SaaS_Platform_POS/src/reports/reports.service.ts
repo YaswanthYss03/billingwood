@@ -270,6 +270,9 @@ export class ReportsService {
     });
 
     const inventory = batches.reduce((acc, batch) => {
+      // Skip ingredient batches - only process item batches
+      if (!batch.itemId || !batch.item) return acc;
+      
       const itemId = batch.itemId;
       if (!acc[itemId]) {
         acc[itemId] = {
@@ -296,6 +299,69 @@ export class ReportsService {
       items: inventoryArray,
       totalValue,
       totalItems: inventoryArray.length,
+      totalBatches: batches.length,
+    };
+  }
+
+  /**
+   * Get current ingredient inventory with batch aggregation
+   */
+  async getIngredientInventory(tenantId: string) {
+    const batches = await this.prisma.inventoryBatch.findMany({
+      where: {
+        tenantId,
+        ingredientId: { not: null },
+        currentQuantity: { gt: 0 },
+      },
+      include: {
+        ingredient: {
+          select: {
+            name: true,
+            unit: true,
+          },
+        },
+      },
+      orderBy: {
+        purchaseDate: 'asc',
+      },
+    });
+
+    const inventory = batches.reduce((acc, batch) => {
+      if (!batch.ingredientId || !batch.ingredient) return acc;
+      
+      const ingredientId = batch.ingredientId;
+      if (!acc[ingredientId]) {
+        acc[ingredientId] = {
+          ingredientId,
+          ingredientName: batch.ingredient.name,
+          unit: batch.ingredient.unit,
+          totalQuantity: 0,
+          totalValue: 0,
+          batchCount: 0,
+          batches: [],
+        };
+      }
+      acc[ingredientId].totalQuantity += Number(batch.currentQuantity);
+      acc[ingredientId].totalValue += Number(batch.currentQuantity) * Number(batch.costPrice);
+      acc[ingredientId].batchCount += 1;
+      acc[ingredientId].batches.push({
+        batchId: batch.id,
+        batchNumber: batch.batchNumber,
+        quantity: Number(batch.currentQuantity),
+        costPrice: Number(batch.costPrice),
+        purchaseDate: batch.purchaseDate,
+        expiryDate: batch.expiryDate,
+      });
+      return acc;
+    }, {} as Record<string, any>);
+
+    const ingredientsArray = Object.values(inventory);
+    const totalValue = ingredientsArray.reduce((sum: number, ing: any) => sum + ing.totalValue, 0);
+
+    return {
+      ingredients: ingredientsArray,
+      totalValue,
+      totalIngredients: ingredientsArray.length,
       totalBatches: batches.length,
     };
   }
@@ -338,6 +404,9 @@ export class ReportsService {
     }>();
 
     batches.forEach((batch) => {
+      // Skip ingredient batches - only process item batches
+      if (!batch.itemId || !batch.item) return;
+      
       const itemId = batch.itemId;
       const quantity = Number(batch.currentQuantity);
       const value = quantity * Number(batch.costPrice);

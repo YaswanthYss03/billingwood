@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/services/prisma.service';
 import { RedisService } from '../../common/services/redis.service';
+import { InventoryService } from '../../inventory/inventory.service';
 import { CreateItemDto } from '../dto/create-item.dto';
 import { UpdateItemDto } from '../dto/update-item.dto';
 
@@ -9,6 +10,7 @@ export class ItemsService {
   constructor(
     private prisma: PrismaService,
     private redis: RedisService,
+    private inventoryService: InventoryService,
   ) {}
 
   async create(tenantId: string, createItemDto: CreateItemDto) {
@@ -23,10 +25,20 @@ export class ItemsService {
         price: createItemDto.price,
         gstRate: createItemDto.gstRate || 0,
         trackInventory: createItemDto.trackInventory ?? true,
+        inventoryMode: createItemDto.inventoryMode || 'AUTO',
         unit: createItemDto.unit || 'PCS',
       },
       include: {
         category: true,
+        recipes: {
+          include: {
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -64,6 +76,15 @@ export class ItemsService {
       },
       include: {
         category: true,
+        recipes: {
+          include: {
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { name: 'asc' },
     });
@@ -79,6 +100,15 @@ export class ItemsService {
       where: { id, tenantId, deletedAt: null },
       include: {
         category: true,
+        recipes: {
+          include: {
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -101,6 +131,15 @@ export class ItemsService {
       data: updateItemDto,
       include: {
         category: true,
+        recipes: {
+          include: {
+            ingredients: {
+              include: {
+                ingredient: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -164,17 +203,25 @@ export class ItemsService {
     return updated;
   }
 
-  async getCurrentStock(tenantId: string, itemId: string): Promise<number> {
+  async getCurrentStock(tenantId: string, itemId: string, locationId?: string): Promise<number> {
     const item = await this.findOne(tenantId, itemId);
 
     if (!item.trackInventory) {
       return Infinity; // Unlimited stock for non-tracked items
     }
 
+    // For Starter plan (or if no batches exist), return simple quantity
+    // This is detected by checking if item has a quantity value set
+    if (item.quantity !== null && item.quantity !== undefined) {
+      return Number(item.quantity);
+    }
+
+    // Professional plan: Calculate from inventory batches
     const batches = await this.prisma.inventoryBatch.findMany({
       where: {
         tenantId,
         itemId,
+        ...(locationId && { locationId }),
         currentQuantity: { gt: 0 },
       },
     });
@@ -184,6 +231,33 @@ export class ItemsService {
     }, 0);
 
     return totalStock;
+  }
+
+  /**
+   * Update item quantity (Starter Plan - simple quantity management)
+   * @param tenantId Tenant ID
+   * @param itemId Item ID
+   * @param quantity New quantity to set (or amount to add if isIncrement=true)
+   * @param isIncrement If true, adds to current quantity. If false, sets absolute value.
+   */
+  async updateQuantity(tenantId: string, itemId: string, quantity: number, isIncrement: boolean = true) {
+    await this.findOne(tenantId, itemId); // Ensure item exists
+
+    const updateData = isIncrement
+      ? { quantity: { increment: quantity } }
+      : { quantity };
+
+    const item = await this.prisma.item.update({
+      where: { id: itemId },
+      data: updateData,
+    });
+
+    // Invalidate cache
+    await this.redis.del(`item:${tenantId}:${itemId}`);
+    await this.redis.delTenantCache(tenantId, 'items');
+    await this.redis.delTenantCache(tenantId, `items:category:${item.categoryId}`);
+
+    return item;
   }
 
   /**
@@ -220,5 +294,183 @@ export class ItemsService {
     } catch (error) {
       console.error('Failed to pre-warm cache:', error);
     }
+  }
+
+  /**
+   * Prepare dishes from ingredients (Professional Plan)
+   * This deducts ingredients based on recipe and adds to item quantity
+   */
+  async prepareDishes(tenantId: string, itemId: string, quantity: number) {
+    const item = await this.findOne(tenantId, itemId);
+
+    // Get tenant subscription plan
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { subscriptionPlan: true },
+    });
+
+    const isStarterPlan = tenant?.subscriptionPlan === 'STARTER' || tenant?.subscriptionPlan === 'FREE_TRIAL';
+
+    // Check if item has a recipe
+    const recipe = await this.prisma.recipe.findFirst({
+      where: {
+        finishedGoodId: itemId,
+        tenantId,
+        isActive: true,
+      },
+      include: {
+        ingredients: {
+          include: {
+            ingredient: true,
+          },
+        },
+      },
+    });
+
+    if (!recipe) {
+      throw new NotFoundException(`No recipe found for item ${item.name}`);
+    }
+
+    // Execute in transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Calculate and validate ingredient availability
+      const ingredientRequirements: any[] = [];
+      const shortages: any[] = [];
+      const batchAllocations: Map<string, any[]> = new Map();
+
+      console.log(`[PrepareDishes] Item: ${item.name}, Recipe: ${recipe.name}, Quantity: ${quantity}`);
+      console.log(`[PrepareDishes] Recipe ingredients:`, recipe.ingredients.map(ing => ({
+        id: ing.ingredientId,
+        name: ing.ingredient.name,
+        quantity: Number(ing.quantity),
+      })));
+
+      for (const recipeIng of recipe.ingredients) {
+        const requiredQty = Number(recipeIng.quantity) * quantity;
+
+        if (isStarterPlan) {
+          // Starter Plan: Simple quantity check
+          const ingredient = await tx.ingredient.findUnique({
+            where: { id: recipeIng.ingredientId },
+          });
+
+          if (!ingredient) {
+            throw new NotFoundException(`Ingredient ${recipeIng.ingredient.name} not found`);
+          }
+
+          const available = Number(ingredient.quantity);
+
+          if (available < requiredQty) {
+            shortages.push({
+              name: ingredient.name,
+              required: requiredQty,
+              available,
+              shortage: requiredQty - available,
+              unit: recipeIng.unit,
+            });
+          }
+
+          ingredientRequirements.push({
+            ingredientId: ingredient.id,
+            name: ingredient.name,
+            required: requiredQty,
+            unit: recipeIng.unit,
+          });
+        } else {
+          // Professional Plan: Check and allocate from batches using FIFO
+          try {
+            const allocations = await this.inventoryService.allocateIngredientBatchesFIFO(
+              tenantId,
+              recipeIng.ingredientId,
+              requiredQty,
+              undefined, // locationId - can be added later
+              tx,
+            );
+            batchAllocations.set(recipeIng.ingredientId, allocations);
+            ingredientRequirements.push({
+              ingredientId: recipeIng.ingredientId,
+              name: recipeIng.ingredient.name,
+              required: requiredQty,
+              unit: recipeIng.unit,
+            });
+          } catch (error) {
+            // Extract available quantity from error message if present
+            let available = 0;
+            const availableMatch = error.message?.match(/Available: (\d+\.?\d*)/);
+            if (availableMatch) {
+              available = parseFloat(availableMatch[1]);
+            }
+            
+            shortages.push({
+              name: recipeIng.ingredient.name,
+              required: requiredQty,
+              available,
+              shortage: requiredQty - available,
+              unit: recipeIng.unit,
+              error: error.message,
+            });
+          }
+        }
+      }
+
+      if (shortages.length > 0) {
+        throw new Error(
+          `Insufficient ingredients: ${shortages.map(s => `${s.name} (need ${s.required}${s.unit}, have ${s.available}${s.unit})`).join(', ')}`
+        );
+      }
+
+      // Deduct ingredients
+      if (isStarterPlan) {
+        // Starter Plan: Simple quantity decrement
+        for (const req of ingredientRequirements) {
+          await tx.ingredient.update({
+            where: { id: req.ingredientId },
+            data: {
+              quantity: {
+                decrement: req.required,
+              },
+            },
+          });
+        }
+      } else {
+        // Professional Plan: Deduct from batches using FIFO allocations
+        for (const req of ingredientRequirements) {
+          const allocations = batchAllocations.get(req.ingredientId) || [];
+          for (const allocation of allocations) {
+            await tx.inventoryBatch.update({
+              where: { id: allocation.batchId },
+              data: {
+                currentQuantity: {
+                  decrement: allocation.quantityUsed,
+                },
+              },
+            });
+          }
+        }
+      }
+
+      // Add to item quantity
+      const updatedItem = await tx.item.update({
+        where: { id: itemId },
+        data: {
+          quantity: {
+            increment: quantity,
+          },
+        },
+      });
+
+      return {
+        item: updatedItem,
+        ingredientsDeducted: ingredientRequirements,
+        quantityPrepared: quantity,
+      };
+    });
+
+    // Invalidate caches
+    await this.redis.del(`item:${tenantId}:${itemId}`);
+    await this.redis.delTenantCache(tenantId, 'items');
+    await this.redis.delTenantCache(tenantId, `items:category:${item.categoryId}`);
+
+    return result;
   }
 }

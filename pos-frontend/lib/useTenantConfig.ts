@@ -31,32 +31,14 @@ const BUSINESS_FEATURES: Record<string, BusinessFeatures> = {
     defaultUnit: 'PCS',
     requiresTableNumber: true,
   },
-  SWEET_SHOP: {
-    hasKOT: false,
-    hasTables: false,
-    hasWeightedItems: true,
-    hasBarcodeScanning: false,
-    inventoryTracking: 'BATCH',
-    defaultUnit: 'KG',
-    requiresTableNumber: false,
-  },
-  SUPERMARKET: {
-    hasKOT: false,
-    hasTables: false,
-    hasWeightedItems: true,
-    hasBarcodeScanning: true,
-    inventoryTracking: 'SKU',
-    defaultUnit: 'PCS',
-    requiresTableNumber: false,
-  },
-  CAFE: {
+  HOTEL: {
     hasKOT: true,
     hasTables: true,
     hasWeightedItems: false,
     hasBarcodeScanning: false,
     inventoryTracking: 'BATCH',
     defaultUnit: 'PCS',
-    requiresTableNumber: false,
+    requiresTableNumber: true,
   },
   RETAIL: {
     hasKOT: false,
@@ -64,15 +46,6 @@ const BUSINESS_FEATURES: Record<string, BusinessFeatures> = {
     hasWeightedItems: false,
     hasBarcodeScanning: true,
     inventoryTracking: 'SKU',
-    defaultUnit: 'PCS',
-    requiresTableNumber: false,
-  },
-  OTHER: {
-    hasKOT: false,
-    hasTables: false,
-    hasWeightedItems: false,
-    hasBarcodeScanning: false,
-    inventoryTracking: 'BATCH',
     defaultUnit: 'PCS',
     requiresTableNumber: false,
   },
@@ -85,31 +58,13 @@ const DEFAULT_SETTINGS: Record<string, TenantSettings> = {
     requireTableNumber: true,
     enableThermalPrinter: false,
   },
-  CAFE: {
+  HOTEL: {
     kotEnabled: true,
     autoGenerateKOT: false,
-    requireTableNumber: false,
-    enableThermalPrinter: false,
-  },
-  SWEET_SHOP: {
-    kotEnabled: false,
-    autoGenerateKOT: false,
-    requireTableNumber: false,
-    enableThermalPrinter: false,
-  },
-  SUPERMARKET: {
-    kotEnabled: false,
-    autoGenerateKOT: false,
-    requireTableNumber: false,
+    requireTableNumber: true,
     enableThermalPrinter: false,
   },
   RETAIL: {
-    kotEnabled: false,
-    autoGenerateKOT: false,
-    requireTableNumber: false,
-    enableThermalPrinter: false,
-  },
-  OTHER: {
     kotEnabled: false,
     autoGenerateKOT: false,
     requireTableNumber: false,
@@ -121,9 +76,9 @@ export function useTenantConfig() {
   const { tenant } = useAuthStore();
   const [settings, setSettings] = useState<TenantSettings>({});
 
-  const businessType = tenant?.businessType || 'OTHER';
-  const features = BUSINESS_FEATURES[businessType] || BUSINESS_FEATURES.OTHER;
-  const defaultSettings = DEFAULT_SETTINGS[businessType] || DEFAULT_SETTINGS.OTHER;
+  const businessType = tenant?.businessType || 'RETAIL';
+  const features = BUSINESS_FEATURES[businessType] || BUSINESS_FEATURES.RETAIL;
+  const defaultSettings = DEFAULT_SETTINGS[businessType] || DEFAULT_SETTINGS.RETAIL;
 
   // Merge default settings with tenant-specific settings
   const effectiveSettings = {
@@ -151,6 +106,6 @@ export function useTenantConfig() {
     hasBarcodeScanning: features.hasBarcodeScanning,
     requiresTableNumber: effectiveSettings.requireTableNumber ?? features.requiresTableNumber,
     // Check if settings menu should be shown
-    canConfigureKOT: features.hasKOT, // Only RESTAURANT and CAFE
+    canConfigureKOT: features.hasKOT, // Only RESTAURANT and HOTEL
   };
 }

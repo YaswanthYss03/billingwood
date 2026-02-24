@@ -20,3 +20,10 @@ export const CurrentUserId = createParamDecorator(
     return request.user?.id;
   },
 );
+
+export const CurrentUserLocationId = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user?.locationId;
+  },
+);

@@ -60,6 +60,11 @@ class BillItemDto {
   @ApiProperty({ example: 'Biryani' })
   @IsString()
   itemName: string;
+
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  @IsOptional()
+  isComposite?: boolean;
 }
 
 export class CreateBillDto {
@@ -108,4 +113,9 @@ export class CreateBillDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @ApiPropertyOptional({ example: 'STARTER', description: 'Subscription plan for inventory deduction logic' })
+  @IsOptional()
+  @IsIn(['FREE_TRIAL', 'STARTER', 'PROFESSIONAL', 'ENTERPRISE'])
+  subscriptionPlan?: string;
 }

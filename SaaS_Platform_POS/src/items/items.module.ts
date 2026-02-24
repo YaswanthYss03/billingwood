@@ -3,9 +3,10 @@ import { CategoriesController } from './controllers/categories.controller';
 import { ItemsController } from './controllers/items.controller';
 import { CategoriesService } from './services/categories.service';
 import { ItemsService } from './services/items.service';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
-  imports: [],
+  imports: [InventoryModule],
   controllers: [CategoriesController, ItemsController],
   providers: [CategoriesService, ItemsService],
   exports: [CategoriesService, ItemsService],

@@ -15,6 +15,21 @@ datasource db {
 // TENANTS & USERS
 // ============================================
 
+enum SubscriptionPlan {
+  FREE_TRIAL
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SUSPENDED
+}
+
 model Tenant {
   id        String   @id @default(uuid())
   name      String
@@ -23,6 +38,18 @@ model Tenant {
   address   String?
   phone     String?
   email     String?
+  
+  // Subscription Management
+  subscriptionPlan   SubscriptionPlan   @default(FREE_TRIAL) @map("subscription_plan")
+  subscriptionStatus SubscriptionStatus @default(TRIAL) @map("subscription_status")
+  trialStartDate     DateTime?          @map("trial_start_date")
+  trialEndDate       DateTime?          @map("trial_end_date")
+  subscriptionStartDate DateTime?       @map("subscription_start_date")
+  subscriptionEndDate   DateTime?       @map("subscription_end_date")
+  billingCycle       String?            @default("MONTHLY") // MONTHLY or YEARLY
+  
+  // Usage Tracking
+  usageStats         Json?              @default("{}") @map("usage_stats") // Track bills, items, users count
   
   // Configuration
   inventoryMethod String @default("FIFO") @map("inventory_method") // FIFO or WEIGHTED_AVERAGE
@@ -40,19 +67,29 @@ model Tenant {
   
   // Relations
   users       User[]
+  locations   Location[]
+  customers   Customer[]
   categories  Category[]
   items       Item[]
   inventoryBatches InventoryBatch[]
+  ingredients Ingredient[]
   purchases   Purchase[]
   bills       Bill[]
   kots        KOT[]
   printJobs   PrintJob[]
   auditLogs   AuditLog[]
+  loyaltyTransactions LoyaltyTransaction[]
+  
+  // Professional Plan features
+  vendors     Vendor[]
+  recipes     Recipe[]
+  wastageLogs WastageLog[]
   
   @@map("tenants")
 }
 
 enum UserRole {
+  SUPER_ADMIN // Platform admin with access to all tenants
   OWNER
   MANAGER
   CASHIER
@@ -61,7 +98,8 @@ enum UserRole {
 
 model User {
   id       String   @id @default(uuid())
-  tenantId String   @map("tenant_id")
+  tenantId String?  @map("tenant_id") // Optional for SUPER_ADMIN
+  locationId String? @map("location_id") // Optional: If assigned, user can only access this location
   
   username String   @unique
   password String   // Hashed password
@@ -79,12 +117,14 @@ model User {
   deletedAt DateTime? @map("deleted_at")
   
   // Relations
-  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenant    Tenant?   @relation(fields: [tenantId], references: [id])
+  location  Location? @relation(fields: [locationId], references: [id])
   bills     Bill[]
   kots      KOT[]
   auditLogs AuditLog[]
   
   @@index([tenantId])
+  @@index([locationId])
   @@index([username])
   @@map("users")
 }
@@ -146,6 +186,14 @@ model Item {
   inventoryMode  InventoryMode @default(AUTO) @map("inventory_mode")
   unit           String        @default("PCS") // PCS, KG, L, etc.
   
+  // Simple Quantity Tracking (Starter Plan)
+  quantity       Decimal       @default(0) @db.Decimal(10, 3) // Simple quantity for Starter plan
+  
+  // Advanced Inventory (Professional Plan)
+  isComposite    Boolean       @default(false) @map("is_composite") // Is this a recipe/BOM item?
+  reorderLevel   Decimal?      @map("reorder_level") @db.Decimal(10, 3) // Alert when stock below this
+  reorderQuantity Decimal?     @map("reorder_quantity") @db.Decimal(10, 3) // Suggested purchase quantity
+  
   // Status
   isActive    Boolean  @default(true) @map("is_active")
   
@@ -162,6 +210,10 @@ model Item {
   kotItems    KOTItem[]
   purchaseItems PurchaseItem[]
   
+  // Recipe/BOM relations (Professional Plan)
+  recipes          Recipe[]           @relation("FinishedGood") // This item as a finished good
+  wastageLogs      WastageLog[]
+  
   @@unique([tenantId, sku])
   @@index([tenantId])
   @@index([categoryId])
@@ -175,8 +227,10 @@ model Item {
 model InventoryBatch {
   id              String   @id @default(uuid())
   tenantId        String   @map("tenant_id")
-  itemId          String   @map("item_id")
+  itemId          String?  @map("item_id") // For finished goods (Professional Plan)
+  ingredientId    String?  @map("ingredient_id") // For raw materials (Professional Plan)
   purchaseId      String?  @map("purchase_id")
+  locationId      String?  @map("location_id") // Multi-location support
   
   // Batch details
   batchNumber     String   @map("batch_number")
@@ -193,15 +247,50 @@ model InventoryBatch {
   updatedAt       DateTime @updatedAt @map("updated_at")
   
   // Relations
-  tenant          Tenant   @relation(fields: [tenantId], references: [id])
-  item            Item     @relation(fields: [itemId], references: [id])
-  purchase        Purchase? @relation(fields: [purchaseId], references: [id])
+  tenant          Tenant     @relation(fields: [tenantId], references: [id])
+  item            Item?      @relation(fields: [itemId], references: [id])
+  ingredient      Ingredient? @relation(fields: [ingredientId], references: [id])
+  purchase        Purchase?  @relation(fields: [purchaseId], references: [id])
+  location        Location?  @relation(fields: [locationId], references: [id])
   billItemBatches BillItemBatch[]
+  wastageLogs     WastageLog[]
   
   @@index([tenantId])
   @@index([itemId])
+  @@index([ingredientId])
   @@index([purchaseId])
+  @@index([locationId])
   @@map("inventory_batches")
+}
+
+// ============================================
+// INGREDIENTS (Starter Plan - Simple Inventory)
+// ============================================
+
+model Ingredient {
+  id                String           @id @default(uuid())
+  tenantId          String           @map("tenant_id")
+  
+  name              String
+  unit              String           // KG, G, L, ML, PCS, PACKETS, POUCHES, etc.
+  quantity          Decimal          @default(0) @db.Decimal(10, 3) // For Starter Plan simple tracking
+  
+  // Status
+  isActive          Boolean          @default(true) @map("is_active")
+  
+  // Timestamps
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  deletedAt         DateTime?        @map("deleted_at")
+  
+  // Relations
+  tenant            Tenant           @relation(fields: [tenantId], references: [id])
+  recipeIngredients RecipeIngredient[] // Used in recipes
+  purchaseItems     PurchaseItem[]   // Professional Plan: Purchase orders
+  inventoryBatches  InventoryBatch[] // Professional Plan: Batch tracking
+  
+  @@index([tenantId])
+  @@map("ingredients")
 }
 
 // ============================================
@@ -209,17 +298,19 @@ model InventoryBatch {
 // ============================================
 
 enum PurchaseStatus {
-  DRAFT
-  RECEIVED
+  DRAFT        // Creating purchase order
+  ORDERED      // PO sent to vendor (Professional Plan)
+  RECEIVED     // Goods received (GRN)
   CANCELLED
 }
 
 model Purchase {
   id              String         @id @default(uuid())
   tenantId        String         @map("tenant_id")
+  vendorId        String?        @map("vendor_id") // Professional Plan: Link to Vendor
   
   purchaseNumber  String         @unique @map("purchase_number")
-  supplierName    String?        @map("supplier_name")
+  supplierName    String?        @map("supplier_name") // Fallback if no vendor linked
   invoiceNumber   String?        @map("invoice_number")
   
   status          PurchaseStatus @default(DRAFT)
@@ -227,7 +318,9 @@ model Purchase {
   
   // Dates
   purchaseDate    DateTime       @map("purchase_date")
-  receivedDate    DateTime?      @map("received_date")
+  orderedDate     DateTime?      @map("ordered_date")  // Professional Plan: When PO sent
+  receivedDate    DateTime?      @map("received_date") // When goods received
+  expectedDate    DateTime?      @map("expected_date") // Professional Plan: Expected delivery
   
   notes           String?
   
@@ -238,33 +331,202 @@ model Purchase {
   
   // Relations
   tenant          Tenant         @relation(fields: [tenantId], references: [id])
+  vendor          Vendor?        @relation(fields: [vendorId], references: [id]) // Professional Plan
   items           PurchaseItem[]
   inventoryBatches InventoryBatch[]
   
   @@index([tenantId])
+  @@index([vendorId])
   @@map("purchases")
 }
 
 model PurchaseItem {
-  id          String   @id @default(uuid())
-  purchaseId  String   @map("purchase_id")
-  itemId      String   @map("item_id")
+  id           String      @id @default(uuid())
+  purchaseId   String      @map("purchase_id")
+  itemId       String?     @map("item_id") // For finished goods
+  ingredientId String?     @map("ingredient_id") // For raw materials
   
-  quantity    Decimal  @db.Decimal(10, 3)
-  costPrice   Decimal  @map("cost_price") @db.Decimal(10, 2)
-  totalCost   Decimal  @map("total_cost") @db.Decimal(10, 2)
+  quantity     Decimal     @db.Decimal(10, 3)
+  costPrice    Decimal     @map("cost_price") @db.Decimal(10, 2)
+  totalCost    Decimal     @map("total_cost") @db.Decimal(10, 2)
   
   // Timestamps
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
   
   // Relations
-  purchase    Purchase @relation(fields: [purchaseId], references: [id])
-  item        Item     @relation(fields: [itemId], references: [id])
+  purchase     Purchase    @relation(fields: [purchaseId], references: [id])
+  item         Item?       @relation(fields: [itemId], references: [id])
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
   
   @@index([purchaseId])
   @@index([itemId])
+  @@index([ingredientId])
   @@map("purchase_items")
+}
+
+// ============================================
+// VENDOR MANAGEMENT (Professional Plan)
+// ============================================
+
+model Vendor {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  
+  // Basic Info
+  name            String
+  contactPerson   String?  @map("contact_person")
+  phone           String?
+  email           String?
+  
+  // Address
+  address         String?
+  city            String?
+  state           String?
+  pincode         String?
+  country         String?  @default("India")
+  
+  // Business Details
+  gstNumber       String?  @map("gst_number")
+  panNumber       String?  @map("pan_number")
+  
+  // Payment Terms (Professional Plan)
+  paymentTerms    String?  @default("NET_30") @map("payment_terms") // NET_30, NET_60, COD, etc.
+  creditLimit     Decimal? @map("credit_limit") @db.Decimal(10, 2)
+  
+  // Banking
+  bankName        String?  @map("bank_name")
+  accountNumber   String?  @map("account_number")
+  ifscCode        String?  @map("ifsc_code")
+  
+  // Metadata
+  notes           String?
+  tags            String[] @default([])
+  
+  // Status
+  isActive        Boolean  @default(true) @map("is_active")
+  
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  
+  // Relations
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  purchases       Purchase[]
+  
+  @@index([tenantId])
+  @@map("vendors")
+}
+
+// ============================================
+// RECIPE/BOM MANAGEMENT (Professional Plan - F&B)
+// ============================================
+
+model Recipe {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  finishedGoodId  String   @map("finished_good_id") // The item this recipe produces
+  
+  name            String   // Recipe name (e.g., "Margherita Pizza Recipe")
+  description     String?
+  
+  // Yield information
+  yieldQuantity   Decimal  @default(1) @map("yield_quantity") @db.Decimal(10, 3) // How many units this recipe makes
+  yieldUnit       String   @default("PCS") @map("yield_unit") // PCS, KG, L, etc.
+  
+  // Costing
+  preparationTime Int?     @map("preparation_time") // In minutes
+  
+  // Status
+  isActive        Boolean  @default(true) @map("is_active")
+  
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  
+  // Relations
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+  finishedGood    Item     @relation("FinishedGood", fields: [finishedGoodId], references: [id])
+  ingredients     RecipeIngredient[]
+  
+  @@index([tenantId])
+  @@index([finishedGoodId])
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id              String   @id @default(uuid())
+  recipeId        String   @map("recipe_id")
+  ingredientId    String   @map("ingredient_id") // The raw material from Ingredient table
+  
+  // Quantity required
+  quantity        Decimal  @db.Decimal(10, 3)
+  unit            String   @default("PCS")
+  
+  // Cost allocation
+  wastagePercent  Decimal  @default(0) @map("wastage_percent") @db.Decimal(5, 2) // Expected wastage %
+  
+  notes           String?
+  
+  // Timestamps
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  recipe          Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient      Ingredient @relation(fields: [ingredientId], references: [id])
+  
+  @@index([recipeId])
+  @@index([ingredientId])
+  @@map("recipe_ingredients")
+}
+
+// ============================================
+// WASTAGE TRACKING (Professional Plan)
+// ============================================
+
+enum WastageReason {
+  EXPIRED
+  DAMAGED
+  SPILLAGE
+  THEFT
+  OTHER
+}
+
+model WastageLog {
+  id              String        @id @default(uuid())
+  tenantId        String        @map("tenant_id")
+  itemId          String        @map("item_id")
+  batchId         String?       @map("batch_id") // Optional: specific batch
+  
+  // Wastage details
+  quantity        Decimal       @db.Decimal(10, 3)
+  reason          WastageReason
+  description     String?
+  
+  // Financial impact
+  estimatedValue  Decimal       @map("estimated_value") @db.Decimal(10, 2)
+  
+  // Recorded by
+  recordedBy      String        @map("recorded_by") // User ID
+  recordedAt      DateTime      @default(now()) @map("recorded_at")
+  
+  // Timestamps
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  item            Item          @relation(fields: [itemId], references: [id])
+  batch           InventoryBatch? @relation(fields: [batchId], references: [id])
+  
+  @@index([tenantId])
+  @@index([itemId])
+  @@index([batchId])
+  @@index([recordedAt])
+  @@map("wastage_logs")
 }
 
 // ============================================
@@ -295,6 +557,8 @@ model Bill {
   tenantId        String        @map("tenant_id")
   userId          String        @map("user_id")
   kotId           String?       @map("kot_id")
+  locationId      String?       @map("location_id")  // Professional feature
+  customerId      String?       @map("customer_id")  // Professional feature
   
   billNumber      String        @map("bill_number")
   
@@ -303,6 +567,10 @@ model Bill {
   taxAmount       Decimal       @map("tax_amount") @db.Decimal(10, 2)
   discount        Decimal       @default(0) @db.Decimal(10, 2)
   totalAmount     Decimal       @map("total_amount") @db.Decimal(10, 2)
+  
+  // Loyalty (Professional feature)
+  pointsEarned    Int?          @default(0) @map("points_earned")
+  pointsRedeemed  Int?          @default(0) @map("points_redeemed")
   
   // Payment
   paymentMethod   PaymentMethod @map("payment_method")
@@ -314,7 +582,7 @@ model Bill {
   // Status
   status          BillStatus    @default(COMPLETED)
   
-  // Customer info (optional)
+  // Customer info (optional - for backward compatibility)
   customerName    String?       @map("customer_name")
   customerPhone   String?       @map("customer_phone")
   
@@ -330,12 +598,17 @@ model Bill {
   tenant          Tenant        @relation(fields: [tenantId], references: [id])
   user            User          @relation(fields: [userId], references: [id])
   kot             KOT?          @relation(fields: [kotId], references: [id])
+  location        Location?     @relation(fields: [locationId], references: [id])
+  customer        Customer?     @relation(fields: [customerId], references: [id])
   items           BillItem[]
   printJobs       PrintJob[]
+  loyaltyTransactions LoyaltyTransaction[]
   
   @@unique([tenantId, billNumber])
   @@index([tenantId])
   @@index([userId])
+  @@index([locationId])
+  @@index([customerId])
   @@index([billNumber])
   @@map("bills")
 }
@@ -403,6 +676,7 @@ model KOT {
   id          String     @id @default(uuid())
   tenantId    String     @map("tenant_id")
   userId      String     @map("user_id")
+  locationId  String?    @map("location_id")
   
   kotNumber   String     @unique @map("kot_number")
   tableNumber String?    @map("table_number")
@@ -419,12 +693,14 @@ model KOT {
   // Relations
   tenant      Tenant     @relation(fields: [tenantId], references: [id])
   user        User       @relation(fields: [userId], references: [id])
+  location    Location?  @relation(fields: [locationId], references: [id])
   items       KOTItem[]
   bills       Bill[]
   printJobs   PrintJob[]
   
   @@index([tenantId])
   @@index([userId])
+  @@index([locationId])
   @@map("kots")
 }
 
@@ -536,4 +812,189 @@ model AuditLog {
   @@index([userId])
   @@index([entity, entityId])
   @@map("audit_logs")
+}
+
+// ============================================
+// LOCATIONS (Professional Feature)
+// ============================================
+
+model Location {
+  id          String   @id @default(uuid())
+  tenantId    String   @map("tenant_id")
+  
+  name        String   // "Main Store", "Mall Branch"
+  code        String   // "MS01", "MB02"
+  address     String?
+  city        String?
+  state       String?
+  pincode     String?
+  phone       String?
+  email       String?
+  
+  // Location settings
+  isHeadquarters Boolean  @default(false) @map("is_headquarters")
+  allowStockTransfer Boolean @default(true) @map("allow_stock_transfer")
+  settings    Json?    @default("{}")
+  
+  // Status
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  // Timestamps
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  users       User[]   // Users assigned to this location
+  bills       Bill[]
+  kots        KOT[]
+  inventoryBatches InventoryBatch[]
+  stockTransfersFrom StockTransfer[] @relation("TransferFrom")
+  stockTransfersTo   StockTransfer[] @relation("TransferTo")
+  
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("locations")
+}
+
+// ============================================
+// STOCK TRANSFERS (Professional Feature)
+// ============================================
+
+enum TransferStatus {
+  PENDING
+  IN_TRANSIT
+  RECEIVED
+  CANCELLED
+}
+
+model StockTransfer {
+  id              String         @id @default(uuid())
+  tenantId        String         @map("tenant_id")
+  fromLocationId  String         @map("from_location_id")
+  toLocationId    String         @map("to_location_id")
+  
+  transferNumber  String         @unique @map("transfer_number")
+  status          TransferStatus @default(PENDING)
+  
+  items           Json           // Array of {itemId, quantity, batchId}
+  notes           String?
+  
+  // Tracking
+  sentBy          String?        @map("sent_by")
+  sentAt          DateTime?      @map("sent_at")
+  receivedBy      String?        @map("received_by")
+  receivedAt      DateTime?      @map("received_at")
+  
+  // Timestamps
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  
+  // Relations
+  fromLocation    Location       @relation("TransferFrom", fields: [fromLocationId], references: [id])
+  toLocation      Location       @relation("TransferTo", fields: [toLocationId], references: [id])
+  
+  @@index([tenantId])
+  @@index([fromLocationId])
+  @@index([toLocationId])
+  @@map("stock_transfers")
+}
+
+// ============================================
+// CUSTOMERS & CRM (Professional Feature)
+// ============================================
+
+enum CustomerTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  VIP
+}
+
+model Customer {
+  id             String         @id @default(uuid())
+  tenantId       String         @map("tenant_id")
+  
+  // Basic Info
+  name           String
+  phone          String
+  email          String?
+  dateOfBirth    DateTime?      @map("date_of_birth")
+  anniversary    DateTime?
+  
+  // Address
+  address        String?
+  city           String?
+  state          String?
+  pincode        String?
+  
+  // CRM Data
+  tier           CustomerTier   @default(BRONZE)
+  loyaltyPoints  Int            @default(0) @map("loyalty_points")
+  totalSpent     Decimal        @default(0) @map("total_spent") @db.Decimal(10, 2)
+  visitCount     Int            @default(0) @map("visit_count")
+  lastVisitAt    DateTime?      @map("last_visit_at")
+  
+  // Marketing
+  tags           String[]       @default([])
+  notes          String?
+  marketingOptIn Boolean        @default(true) @map("marketing_opt_in")
+  
+  // Status
+  isActive       Boolean        @default(true) @map("is_active")
+  
+  // Timestamps
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
+  
+  // Relations
+  tenant         Tenant         @relation(fields: [tenantId], references: [id])
+  bills          Bill[]
+  loyaltyTransactions LoyaltyTransaction[]
+  
+  @@unique([tenantId, phone])
+  @@index([tenantId])
+  @@index([phone])
+  @@index([email])
+  @@map("customers")
+}
+
+// ============================================
+// LOYALTY PROGRAM (Professional Feature)
+// ============================================
+
+enum LoyaltyTransactionType {
+  EARNED
+  REDEEMED
+  EXPIRED
+  ADJUSTED
+}
+
+model LoyaltyTransaction {
+  id          String                 @id @default(uuid())
+  tenantId    String                 @map("tenant_id")
+  customerId  String                 @map("customer_id")
+  
+  type        LoyaltyTransactionType
+  points      Int                    // Positive for earning, negative for redemption
+  billId      String?                @map("bill_id")
+  
+  description String?
+  expiresAt   DateTime?              @map("expires_at")
+  
+  // Timestamps
+  createdAt   DateTime               @default(now()) @map("created_at")
+  
+  // Relations
+  tenant      Tenant                 @relation(fields: [tenantId], references: [id])
+  customer    Customer               @relation(fields: [customerId], references: [id])
+  bill        Bill?                  @relation(fields: [billId], references: [id])
+  
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([billId])
+  @@map("loyalty_transactions")
 }

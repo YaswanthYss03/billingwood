@@ -17,7 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserRole, KOTStatus } from '@prisma/client';
-import { CurrentTenant, CurrentUserId } from '../common/decorators/user.decorator';
+import { CurrentTenant, CurrentUserId, CurrentUserLocationId } from '../common/decorators/user.decorator';
 
 @ApiTags('kot')
 @Controller('kot')
@@ -43,9 +43,10 @@ export class KotController {
   @ApiQuery({ name: 'status', enum: KOTStatus, required: false })
   findAll(
     @CurrentTenant() tenantId: string,
+    @CurrentUserLocationId() userLocationId: string | undefined,
     @Query('status') status?: KOTStatus,
   ) {
-    return this.kotService.findAll(tenantId, status);
+    return this.kotService.findAll(tenantId, status, userLocationId);
   }
 
   @Get(':id')
