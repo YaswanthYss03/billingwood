@@ -1,63 +1,150 @@
-[Nest] 10748  - 02/17/2026, 10:08:40 AM     LOG [BillingService] Creating bill for tenant 65def42f-e1fa-4fed-83d0-1c832c6b8180 by user de046be5-6a17-47ca-a6bf-4da028d9bd5d
-[Nest] 10748  - 02/17/2026, 10:08:40 AM     LOG [BillingService] === BILL CREATION STARTED ===
-[Nest] 10748  - 02/17/2026, 10:08:40 AM     LOG [BillingService] Data fetch completed in 439ms (0 DB queries, 1 cached)
-[Nest] 10748  - 02/17/2026, 10:08:40 AM     LOG [BillingService] Starting database transaction...
-prisma:query BEGIN
-prisma:query DEALLOCATE ALL
-prisma:query SELECT "public"."bills"."id", "public"."bills"."tenant_id", "public"."bills"."user_id", "public"."bills"."kot_id", "public"."bills"."bill_number", "public"."bills"."subtotal", "public"."bills"."tax_amount", "public"."bills"."discount", "public"."bills"."total_amount", "public"."bills"."payment_method"::text, "public"."bills"."payment_status", "public"."bills"."order_type"::text, "public"."bills"."status"::text, "public"."bills"."customer_name", "public"."bills"."customer_phone", "public"."bills"."notes", "public"."bills"."billed_at", "public"."bills"."created_at", "public"."bills"."updated_at", "public"."bills"."cancelled_at" FROM "public"."bills" WHERE ("public"."bills"."tenant_id" = $1 AND "public"."bills"."bill_number"::text LIKE $2) ORDER BY "public"."bills"."bill_number" DESC LIMIT $3 OFFSET $4
-[Nest] 10748  - 02/17/2026, 10:08:43 AM     LOG [BillingService] Bill number generated in 409ms
-prisma:query INSERT INTO "public"."bills" ("id","tenant_id","user_id","kot_id","bill_number","subtotal","tax_amount","discount","total_amount","payment_method","payment_status","order_type","status","billed_at","created_at","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,CAST($10::text AS "public"."PaymentMethod"),$11,CAST($12::text AS "public"."OrderType"),CAST($13::text AS "public"."BillStatus"),$14,$15,$16) RETURNING "public"."bills"."id", "public"."bills"."tenant_id", "public"."bills"."user_id", "public"."bills"."kot_id", "public"."bills"."bill_number", "public"."bills"."subtotal", "public"."bills"."tax_amount", "public"."bills"."discount", "public"."bills"."total_amount", "public"."bills"."payment_method"::text, "public"."bills"."payment_status", "public"."bills"."order_type"::text, "public"."bills"."status"::text, "public"."bills"."customer_name", "public"."bills"."customer_phone", "public"."bills"."notes", "public"."bills"."billed_at", "public"."bills"."created_at", "public"."bills"."updated_at", "public"."bills"."cancelled_at"
-[Nest] 10748  - 02/17/2026, 10:08:44 AM     LOG [BillingService] Bill created in 409ms
-prisma:query INSERT INTO "public"."bill_items" ("gst_rate","quantity","item_id","created_at","price","bill_id","gst_amount","total_amount","updated_at","id") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-prisma:query SELECT "public"."bill_items"."id", "public"."bill_items"."bill_id", "public"."bill_items"."item_id", "public"."bill_items"."quantity", "public"."bill_items"."price", "public"."bill_items"."gst_rate", "public"."bill_items"."gst_amount", "public"."bill_items"."total_amount", "public"."bill_items"."created_at", "public"."bill_items"."updated_at" FROM "public"."bill_items" WHERE "public"."bill_items"."bill_id" = $1 ORDER BY "public"."bill_items"."created_at" ASC OFFSET $2
-[Nest] 10748  - 02/17/2026, 10:08:45 AM     LOG [BillingService] Bill items created in 1023ms
-prisma:query 
-      SELECT id, current_quantity as "currentQuantity", cost_price as "costPrice", purchase_date as "purchaseDate"
-      FROM inventory_batches
-      WHERE tenant_id = $1
-        AND item_id = $2
-        AND current_quantity > 0
-      ORDER BY purchase_date ASC
-      FOR UPDATE
-    
-prisma:query UPDATE "public"."inventory_batches" SET "current_quantity" = ("public"."inventory_batches"."current_quantity" - $1), "updated_at" = $2 WHERE ("public"."inventory_batches"."id" = $3 AND 1=1) RETURNING "public"."inventory_batches"."id", "public"."inventory_batches"."tenant_id", "public"."inventory_batches"."item_id", "public"."inventory_batches"."purchase_id", "public"."inventory_batches"."batch_number", "public"."inventory_batches"."initial_quantity", "public"."inventory_batches"."current_quantity", "public"."inventory_batches"."cost_price", "public"."inventory_batches"."purchase_date", "public"."inventory_batches"."expiry_date", "public"."inventory_batches"."created_at", "public"."inventory_batches"."updated_at"
-[Nest] 10748  - 02/17/2026, 10:08:45 AM     LOG [InventoryService] Deducted inventory for item 3a8dae78-b706-4c80-b8d1-35dde51e4748: 1 batches updated
-prisma:query INSERT INTO "public"."bill_item_batches" ("bill_item_id","created_at","cost_price","id","batch_id","quantity_used") VALUES ($1,$2,$3,$4,$5,$6)
-[Nest] 10748  - 02/17/2026, 10:08:46 AM     LOG [BillingService] Inventory deducted for item Casual Shirt - Blue: 1 units using 1 batches
-[Nest] 10748  - 02/17/2026, 10:08:46 AM     LOG [BillingService] Inventory processing completed in 1436ms
-prisma:query COMMIT
-[Nest] 10748  - 02/17/2026, 10:08:46 AM     LOG [BillingService] Transaction completed in 6144ms
-[Nest] 10748  - 02/17/2026, 10:08:46 AM     LOG [BillingService] === TOTAL BILL CREATION TIME: 6584ms ===
-prisma:query BEGIN
-[Nest] 10748  - 02/17/2026, 10:08:46 AM     LOG [BillingService] Cleared dashboard cache for tenant 65def42f-e1fa-4fed-83d0-1c832c6b8180
-prisma:query DEALLOCATE ALL
-prisma:query INSERT INTO "public"."audit_logs" ("id","tenant_id","user_id","action","entity","entity_id","before_data","after_data","created_at") VALUES ($1,$2,$3,CAST($4::text AS "public"."AuditAction"),$5,$6,$7,$8,$9) RETURNING "public"."audit_logs"."id", "public"."audit_logs"."tenant_id", "public"."audit_logs"."user_id", "public"."audit_logs"."action"::text, "public"."audit_logs"."entity", "public"."audit_logs"."entity_id", "public"."audit_logs"."before_data", "public"."audit_logs"."after_data", "public"."audit_logs"."ip_address", "public"."audit_logs"."user_agent", "public"."audit_logs"."created_at"
-prisma:query COMMIT
-[Nest] 10748  - 02/17/2026, 10:08:47 AM     LOG [AuditService] Audit: CREATE Bill bdf95a8c-0e4e-495e-ab3c-6401d6011471 by user de046be5-6a17-47ca-a6bf-4da028d9bd5d in tenant 65def42f-e1fa-4fed-83d0-1c832c6b8180
-prisma:query BEGIN
-prisma:query DEALLOCATE ALL
-prisma:query SELECT "public"."bills"."id", "public"."bills"."tenant_id", "public"."bills"."user_id", "public"."bills"."kot_id", "public"."bills"."bill_number", "public"."bills"."subtotal", "public"."bills"."tax_amount", "public"."bills"."discount", "public"."bills"."total_amount", "public"."bills"."payment_method"::text, "public"."bills"."payment_status", "public"."bills"."order_type"::text, "public"."bills"."status"::text, "public"."bills"."customer_name", "public"."bills"."customer_phone", "public"."bills"."notes", "public"."bills"."billed_at", "public"."bills"."created_at", "public"."bills"."updated_at", "public"."bills"."cancelled_at" FROM "public"."bills" WHERE ("public"."bills"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
-prisma:query SELECT "public"."bill_items"."id", "public"."bill_items"."bill_id", "public"."bill_items"."item_id", "public"."bill_items"."quantity", "public"."bill_items"."price", "public"."bill_items"."gst_rate", "public"."bill_items"."gst_amount", "public"."bill_items"."total_amount", "public"."bill_items"."created_at", "public"."bill_items"."updated_at" FROM "public"."bill_items" WHERE "public"."bill_items"."bill_id" IN ($1) OFFSET $2
-prisma:query SELECT "public"."items"."id", "public"."items"."tenant_id", "public"."items"."category_id", "public"."items"."name", "public"."items"."description", "public"."items"."sku", "public"."items"."item_type"::text, "public"."items"."price", "public"."items"."gst_rate", "public"."items"."track_inventory", "public"."items"."inventory_mode"::text, "public"."items"."unit", "public"."items"."is_active", "public"."items"."created_at", "public"."items"."updated_at", "public"."items"."deleted_at" FROM "public"."items" WHERE "public"."items"."id" IN ($1) OFFSET $2
-prisma:query SELECT "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."business_type", "public"."tenants"."gst_number", "public"."tenants"."address", "public"."tenants"."phone", "public"."tenants"."email", "public"."tenants"."inventory_method", "public"."tenants"."currency", "public"."tenants"."timezone", "public"."tenants"."settings", "public"."tenants"."is_active", "public"."tenants"."created_at", "public"."tenants"."updated_at", "public"."tenants"."deleted_at" FROM "public"."tenants" WHERE "public"."tenants"."id" IN ($1) OFFSET $2
-prisma:query SELECT "public"."users"."id", "public"."users"."name" FROM "public"."users" WHERE "public"."users"."id" IN ($1) OFFSET $2
-prisma:query COMMIT
-prisma:query BEGIN
-prisma:query DEALLOCATE ALL
-prisma:query INSERT INTO "public"."print_jobs" ("id","tenant_id","bill_id","job_type","status","payload","attempts","max_attempts","created_at","updated_at") VALUES ($1,$2,$3,CAST($4::text AS "public"."PrintJobType"),CAST($5::text AS "public"."PrintJobStatus"),$6,$7,$8,$9,$10) RETURNING "public"."print_jobs"."id", "public"."print_jobs"."tenant_id", "public"."print_jobs"."bill_id", "public"."print_jobs"."kot_id", "public"."print_jobs"."job_type"::text, "public"."print_jobs"."status"::text, "public"."print_jobs"."payload", "public"."print_jobs"."attempts", "public"."print_jobs"."max_attempts", "public"."print_jobs"."last_error", "public"."print_jobs"."created_at", "public"."print_jobs"."updated_at", "public"."print_jobs"."completed_at"
-prisma:query COMMIT
-[Nest] 10748  - 02/17/2026, 10:08:52 AM     LOG [PrintingService] Bill print job queued: 77e312db-9265-464a-9153-d36799f2e9fc for bill BILL202602000011
-prisma:query BEGIN
-prisma:query DEALLOCATE ALL
-prisma:query SELECT "public"."bills"."id", "public"."bills"."tenant_id", "public"."bills"."user_id", "public"."bills"."kot_id", "public"."bills"."bill_number", "public"."bills"."subtotal", "public"."bills"."tax_amount", "public"."bills"."discount", "public"."bills"."total_amount", "public"."bills"."payment_method"::text, "public"."bills"."payment_status", "public"."bills"."order_type"::text, "public"."bills"."status"::text, "public"."bills"."customer_name", "public"."bills"."customer_phone", "public"."bills"."notes", "public"."bills"."billed_at", "public"."bills"."created_at", "public"."bills"."updated_at", "public"."bills"."cancelled_at" FROM "public"."bills" WHERE "public"."bills"."tenant_id" = $1 ORDER BY "public"."bills"."billed_at" DESC OFFSET $2
-prisma:query SELECT "public"."bill_items"."id", "public"."bill_items"."bill_id", "public"."bill_items"."item_id", "public"."bill_items"."quantity", "public"."bill_items"."price", "public"."bill_items"."gst_rate", "public"."bill_items"."gst_amount", "public"."bill_items"."total_amount", "public"."bill_items"."created_at", "public"."bill_items"."updated_at" FROM "public"."bill_items" WHERE "public"."bill_items"."bill_id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) OFFSET $12
-prisma:query SELECT "public"."items"."id", "public"."items"."tenant_id", "public"."items"."category_id", "public"."items"."name", "public"."items"."description", "public"."items"."sku", "public"."items"."item_type"::text, "public"."items"."price", "public"."items"."gst_rate", "public"."items"."track_inventory", "public"."items"."inventory_mode"::text, "public"."items"."unit", "public"."items"."is_active", "public"."items"."created_at", "public"."items"."updated_at", "public"."items"."deleted_at" FROM "public"."items" WHERE "public"."items"."id" IN ($1,$2,$3,$4) OFFSET $5
-prisma:query SELECT "public"."users"."id", "public"."users"."name", "public"."users"."email" FROM "public"."users" WHERE "public"."users"."id" IN ($1) OFFSET $2
-prisma:query COMMIT
-prisma:query BEGIN
-prisma:query DEALLOCATE ALL
-prisma:query SELECT "public"."bills"."id", "public"."bills"."tenant_id", "public"."bills"."user_id", "public"."bills"."kot_id", "public"."bills"."bill_number", "public"."bills"."subtotal", "public"."bills"."tax_amount", "public"."bills"."discount", "public"."bills"."total_amount", "public"."bills"."payment_method"::text, "public"."bills"."payment_status", "public"."bills"."order_type"::text, "public"."bills"."status"::text, "public"."bills"."customer_name", "public"."bills"."customer_phone", "public"."bills"."notes", "public"."bills"."billed_at", "public"."bills"."created_at", "public"."bills"."updated_at", "public"."bills"."cancelled_at" FROM "public"."bills" WHERE "public"."bills"."tenant_id" = $1 ORDER BY "public"."bills"."billed_at" DESC OFFSET $2
-prisma:query SELECT "public"."bill_items"."id", "public"."bill_items"."bill_id", "public"."bill_items"."item_id", "public"."bill_items"."quantity", "public"."bill_items"."price", "public"."bill_items"."gst_rate", "public"."bill_items"."gst_amount", "public"."bill_items"."total_amount", "public"."bill_items"."created_at", "public"."bill_items"."updated_at" FROM "public"."bill_items" WHERE "public"."bill_items"."bill_id" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) OFFSET $12
-prisma:query SELECT "public"."items"."id", "public"."items"."tenant_id", "public"."items"."category_id", "public"."items"."name", "public"."items"."description", "public"."items"."sku", "public"."items"."item_type"::text, "public"."items"."price", "public"."items"."gst_rate", "public"."items"."track_inventory", "public"."items"."inventory_mode"::text, "public"."items"."unit", "public"."items"."is_active", "public"."items"."created_at", "public"."items"."updated_at", "public"."items"."deleted_at" FROM "public"."items" WHERE "public"."items"."id" IN ($1,$2,$3,$4) OFFSET $5
-prisma:query SELECT "public"."users"."id", "public"."users"."name", "public"."users"."email" FROM "public"."users" WHERE "public"."users"."id" IN ($1) OFFSET $2
-prisma:query COMMIT
+2026-02-24T05:55:30.740552467Z     119 |     }
+2026-02-24T05:55:30.740554517Z     120 |
+2026-02-24T05:55:30.740556557Z   > 121 |     const vendor = await this.prisma.vendor.update({
+2026-02-24T05:55:30.740558597Z         |                                      ^^^^^^
+2026-02-24T05:55:30.740564208Z     122 |       where: { id },
+2026-02-24T05:55:30.740566328Z     123 |       data: updateData,
+2026-02-24T05:55:30.740568308Z     124 |     });
+2026-02-24T05:55:30.740570248Z 
+2026-02-24T05:55:30.740572228Z ERROR in ./src/vendors/vendors.service.ts:139:9
+2026-02-24T05:55:30.740574338Z TS2353: Object literal may only specify known properties, and 'vendorId' does not exist in type 'PurchaseWhereInput'.
+2026-02-24T05:55:30.740576408Z     137 |     const purchaseCount = await this.prisma.purchase.count({
+2026-02-24T05:55:30.740578408Z     138 |       where: {
+2026-02-24T05:55:30.740580418Z   > 139 |         vendorId: id,
+2026-02-24T05:55:30.740582449Z         |         ^^^^^^^^
+2026-02-24T05:55:30.740584489Z     140 |         tenantId,
+2026-02-24T05:55:30.740586549Z     141 |       },
+2026-02-24T05:55:30.740588559Z     142 |     });
+2026-02-24T05:55:30.740590429Z 
+2026-02-24T05:55:30.740592499Z ERROR in ./src/vendors/vendors.service.ts:150:38
+2026-02-24T05:55:30.740594599Z TS2339: Property 'vendor' does not exist on type 'PrismaService'.
+2026-02-24T05:55:30.74059667Z     148 |     }
+2026-02-24T05:55:30.74059869Z     149 |
+2026-02-24T05:55:30.74060074Z   > 150 |     const vendor = await this.prisma.vendor.update({
+2026-02-24T05:55:30.7406028Z         |                                      ^^^^^^
+2026-02-24T05:55:30.74060485Z     151 |       where: { id },
+2026-02-24T05:55:30.74060688Z     152 |       data: {
+2026-02-24T05:55:30.74060892Z     153 |         deletedAt: new Date(),
+2026-02-24T05:55:30.740610831Z 
+2026-02-24T05:55:30.740612791Z ERROR in ./src/vendors/vendors.service.ts:167:39
+2026-02-24T05:55:30.740614821Z TS2339: Property 'vendor' does not exist on type 'PrismaService'.
+2026-02-24T05:55:30.740616811Z     165 |     const vendor = await this.findOne(tenantId, id);
+2026-02-24T05:55:30.740618861Z     166 |
+2026-02-24T05:55:30.740620881Z   > 167 |     const updated = await this.prisma.vendor.update({
+2026-02-24T05:55:30.740622901Z         |                                       ^^^^^^
+2026-02-24T05:55:30.740624941Z     168 |       where: { id },
+2026-02-24T05:55:30.740626942Z     169 |       data: {
+2026-02-24T05:55:30.740629002Z     170 |         isActive: !vendor.isActive,
+2026-02-24T05:55:30.740630892Z 
+2026-02-24T05:55:30.740644683Z ERROR in ./src/vendors/vendors.service.ts:185:9
+2026-02-24T05:55:30.740647053Z TS2353: Object literal may only specify known properties, and 'vendorId' does not exist in type 'PurchaseWhereInput'.
+2026-02-24T05:55:30.740649113Z     183 |     const stats = await this.prisma.purchase.aggregate({
+2026-02-24T05:55:30.740651113Z     184 |       where: {
+2026-02-24T05:55:30.740653114Z   > 185 |         vendorId,
+2026-02-24T05:55:30.740655114Z         |         ^^^^^^^^
+2026-02-24T05:55:30.740657094Z     186 |         tenantId,
+2026-02-24T05:55:30.740659184Z     187 |         status: 'RECEIVED',
+2026-02-24T05:55:30.740661234Z     188 |       },
+2026-02-24T05:55:30.740663124Z 
+2026-02-24T05:55:30.740665184Z ERROR in ./src/vendors/vendors.service.ts:197:9
+2026-02-24T05:55:30.740668264Z TS2353: Object literal may only specify known properties, and 'vendorId' does not exist in type 'PurchaseWhereInput'.
+2026-02-24T05:55:30.740670465Z     195 |     const lastPurchase = await this.prisma.purchase.findFirst({
+2026-02-24T05:55:30.740672475Z     196 |       where: {
+2026-02-24T05:55:30.740674525Z   > 197 |         vendorId,
+2026-02-24T05:55:30.740680495Z         |         ^^^^^^^^
+2026-02-24T05:55:30.740682605Z     198 |         tenantId,
+2026-02-24T05:55:30.740684596Z     199 |       },
+2026-02-24T05:55:30.740686626Z     200 |       orderBy: {
+2026-02-24T05:55:30.740688556Z 
+2026-02-24T05:55:30.740690606Z ERROR in ./src/vendors/vendors.service.ts:218:20
+2026-02-24T05:55:30.740692636Z TS18048: 'stats._sum' is possibly 'undefined'.
+2026-02-24T05:55:30.740694716Z     216 |       },
+2026-02-24T05:55:30.740696786Z     217 |       totalPurchases: stats._count || 0,
+2026-02-24T05:55:30.740698867Z   > 218 |       totalAmount: stats._sum.totalAmount || 0,
+2026-02-24T05:55:30.740700927Z         |                    ^^^^^^^^^^
+2026-02-24T05:55:30.740702927Z     219 |       lastPurchase: lastPurchase || null,
+2026-02-24T05:55:30.740704927Z     220 |     };
+2026-02-24T05:55:30.740706957Z     221 |   }
+2026-02-24T05:55:30.740708817Z 
+2026-02-24T05:55:30.740710847Z ERROR in ./src/wastage/dto/create-wastage-log.dto.ts:2:10
+2026-02-24T05:55:30.740712998Z TS2305: Module '"@prisma/client"' has no exported member 'WastageReason'.
+2026-02-24T05:55:30.740715028Z     1 | import { IsString, IsNumber, IsEnum, IsOptional, IsUUID, Min } from 'class-validator';
+2026-02-24T05:55:30.740717058Z   > 2 | import { WastageReason } from '@prisma/client';
+2026-02-24T05:55:30.740719078Z       |          ^^^^^^^^^^^^^
+2026-02-24T05:55:30.740721128Z     3 |
+2026-02-24T05:55:30.740723208Z     4 | export class CreateWastageLogDto {
+2026-02-24T05:55:30.740725228Z     5 |   @IsUUID()
+2026-02-24T05:55:30.740727109Z 
+2026-02-24T05:55:30.740729129Z ERROR in ./src/wastage/wastage.service.ts:60:30
+2026-02-24T05:55:30.740732039Z TS2339: Property 'wastageLog' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+2026-02-24T05:55:30.740734099Z     58 |
+2026-02-24T05:55:30.740736099Z     59 |         // Create wastage log
+2026-02-24T05:55:30.740738099Z   > 60 |         const log = await tx.wastageLog.create({
+2026-02-24T05:55:30.740740089Z        |                              ^^^^^^^^^^
+2026-02-24T05:55:30.74074207Z     61 |           data: {
+2026-02-24T05:55:30.74074411Z     62 |             tenantId,
+2026-02-24T05:55:30.74074624Z     63 |             itemId: createWastageLogDto.itemId,
+2026-02-24T05:55:30.74074816Z 
+2026-02-24T05:55:30.74075017Z ERROR in ./src/wastage/wastage.service.ts:138:30
+2026-02-24T05:55:30.74075226Z TS2339: Property 'wastageLog' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+2026-02-24T05:55:30.74075433Z     136 |
+2026-02-24T05:55:30.740756411Z     137 |         // Create wastage log
+2026-02-24T05:55:30.740758491Z   > 138 |         const log = await tx.wastageLog.create({
+2026-02-24T05:55:30.740760501Z         |                              ^^^^^^^^^^
+2026-02-24T05:55:30.740762551Z     139 |           data: {
+2026-02-24T05:55:30.740764601Z     140 |             tenantId,
+2026-02-24T05:55:30.740766621Z     141 |             itemId: createWastageLogDto.itemId,
+2026-02-24T05:55:30.740768562Z 
+2026-02-24T05:55:30.740770522Z ERROR in ./src/wastage/wastage.service.ts:188:43
+2026-02-24T05:55:30.740772592Z TS2339: Property 'wastageLog' does not exist on type 'PrismaService'.
+2026-02-24T05:55:30.740774622Z     186 |     }
+2026-02-24T05:55:30.740781222Z     187 |
+2026-02-24T05:55:30.740783312Z   > 188 |     const wastageLogs = await this.prisma.wastageLog.findMany({
+2026-02-24T05:55:30.740785423Z         |                                           ^^^^^^^^^^
+2026-02-24T05:55:30.740787413Z     189 |       where,
+2026-02-24T05:55:30.740789433Z     190 |       include: {
+2026-02-24T05:55:30.740791493Z     191 |         item: {
+2026-02-24T05:55:30.740793393Z 
+2026-02-24T05:55:30.740795353Z ERROR in ./src/wastage/wastage.service.ts:222:43
+2026-02-24T05:55:30.740797373Z TS2339: Property 'wastageLog' does not exist on type 'PrismaService'.
+2026-02-24T05:55:30.740800214Z     220 |     startDate.setDate(startDate.getDate() - days);
+2026-02-24T05:55:30.740802274Z     221 |
+2026-02-24T05:55:30.740804344Z   > 222 |     const wastageLogs = await this.prisma.wastageLog.findMany({
+2026-02-24T05:55:30.740806364Z         |                                           ^^^^^^^^^^
+2026-02-24T05:55:30.740808464Z     223 |       where: {
+2026-02-24T05:55:30.740810494Z     224 |         tenantId,
+2026-02-24T05:55:30.740812745Z     225 |         recordedAt: { gte: startDate },
+2026-02-24T05:55:30.740814655Z 
+2026-02-24T05:55:30.740816745Z ERROR in ./src/wastage/wastage.service.ts:230:8
+2026-02-24T05:55:30.740818805Z TS7006: Parameter 'sum' implicitly has an 'any' type.
+2026-02-24T05:55:30.740820805Z     228 |
+2026-02-24T05:55:30.740822875Z     229 |     const totalValue = wastageLogs.reduce(
+2026-02-24T05:55:30.740824885Z   > 230 |       (sum, log) => sum.plus(log.estimatedValue),
+2026-02-24T05:55:30.740826926Z         |        ^^^
+2026-02-24T05:55:30.740828996Z     231 |       new Decimal(0),
+2026-02-24T05:55:30.740831026Z     232 |     );
+2026-02-24T05:55:30.740833166Z     233 |
+2026-02-24T05:55:30.740835056Z 
+2026-02-24T05:55:30.740836986Z ERROR in ./src/wastage/wastage.service.ts:230:13
+2026-02-24T05:55:30.740839006Z TS7006: Parameter 'log' implicitly has an 'any' type.
+2026-02-24T05:55:30.740840987Z     228 |
+2026-02-24T05:55:30.740843016Z     229 |     const totalValue = wastageLogs.reduce(
+2026-02-24T05:55:30.740845037Z   > 230 |       (sum, log) => sum.plus(log.estimatedValue),
+2026-02-24T05:55:30.740847047Z         |             ^^^
+2026-02-24T05:55:30.740849097Z     231 |       new Decimal(0),
+2026-02-24T05:55:30.740851127Z     232 |     );
+2026-02-24T05:55:30.740853147Z     233 |
+2026-02-24T05:55:30.740855067Z 
+2026-02-24T05:55:30.740857088Z ERROR in ./src/wastage/wastage.service.ts:234:52
+2026-02-24T05:55:30.740859108Z TS7006: Parameter 'log' implicitly has an 'any' type.
+2026-02-24T05:55:30.740861128Z     232 |     );
+2026-02-24T05:55:30.740863148Z     233 |
+2026-02-24T05:55:30.740872369Z   > 234 |     const byReason = wastageLogs.reduce((acc: any, log) => {
+2026-02-24T05:55:30.740874539Z         |                                                    ^^^
+2026-02-24T05:55:30.740876659Z     235 |       const reason = log.reason;
+2026-02-24T05:55:30.740878679Z     236 |       if (!acc[reason]) {
+2026-02-24T05:55:30.740880749Z     237 |         acc[reason] = {
+2026-02-24T05:55:30.740882629Z 
+2026-02-24T05:55:30.74088459Z webpack 5.97.1 compiled with 240 errors in 6735 ms
+2026-02-24T05:55:30.800755333Z ==> Build failed 😞
+2026-02-24T05:55:30.800771404Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

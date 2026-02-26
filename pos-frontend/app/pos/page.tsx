@@ -55,9 +55,18 @@ export default function POSPage() {
   const [linkedKotData, setLinkedKotData] = useState<any>(null);
   const [isKotMode, setIsKotMode] = useState(false);
 
+  // Table management (optional for RESTAURANT business type)
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  const [availableTables, setAvailableTables] = useState<any[]>([]);
+
   useEffect(() => {
     loadData();
     loadDraftOrders();
+    
+    // Load available tables for RESTAURANT business type
+    if (isRestaurant && user?.locationId) {
+      loadAvailableTables();
+    }
     
     // Check if we're coming from a KOT
     const kotId = searchParams.get('kotId');
@@ -78,6 +87,23 @@ export default function POSPage() {
       loadItems(selectedCategory);
     }
   }, [selectedCategory]);
+
+  // Clear table selection when order type changes from DINE_IN
+  useEffect(() => {
+    if (orderType !== 'DINE_IN') {
+      setSelectedTableId(null);
+    }
+  }, [orderType]);
+
+  const loadAvailableTables = async () => {
+    if (!user?.locationId) return;
+    try {
+      const response = await api.tables.getAvailable(user.locationId);
+      setAvailableTables(response.data || []);
+    } catch (error) {
+      console.error('Failed to load tables:', error);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -375,7 +401,7 @@ export default function POSPage() {
       // For restaurants with KOT enabled AND not in KOT billing mode, create KOT instead of bill
       if (kotEnabled && !isKotMode) {
         setBillingLoading(true);
-        const kotData = {
+        const kotData: any = {
           items: cart.map((item) => ({
             itemId: item.itemId,
             quantity: item.quantity,
@@ -384,18 +410,35 @@ export default function POSPage() {
           notes: customerPhone ? `Phone: ${customerPhone}` : undefined,
         };
 
+        // Add tableId if selected (optional) - must be a valid UUID
+        if (selectedTableId && selectedTableId.trim() !== '') {
+          kotData.tableId = selectedTableId;
+        }
+
         const response = await api.kot.create(kotData);
+
+        // If table selected, occupy it
+        if (selectedTableId && response.data?.id) {
+          try {
+            await api.tables.occupy(selectedTableId, response.data.id);
+            loadAvailableTables(); // Refresh available tables
+          } catch (error) {
+            console.error('Failed to occupy table:', error);
+          }
+        }
+
         const endTime = performance.now();
         console.log(`KOT created in ${(endTime - startTime).toFixed(0)}ms`);
         toast.success('Order sent to kitchen successfully!');
         
-        // Reset cart
+        // Reset cart and table selection
         setCart([]);
         setCustomerName('');
         setCustomerPhone('');
         setDiscount(0);
         setPaymentMethod('CASH');
         setOrderType(isRestaurant ? 'DINE_IN' : 'TAKEAWAY');
+        setSelectedTableId(null);
         setBillingLoading(false);
       } else {
         // ⚡ OPTIMISTIC UI: Show receipt IMMEDIATELY with local calculations
@@ -495,6 +538,7 @@ export default function POSPage() {
         setDiscount(0);
         setPaymentMethod('CASH');
         setOrderType(isRestaurant ? 'DINE_IN' : 'TAKEAWAY');
+        setSelectedTableId(null);
         setIsKotMode(false);
         setLinkedKotId(null);
         setLinkedKotData(null);
@@ -540,13 +584,13 @@ export default function POSPage() {
   return (
     <ProtectedRoute>
       <DashboardLayout>
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">Point of Sale</h1>
+        <div className="space-y-4 sm:space-y-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Point of Sale</h1>
 
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Items Section */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {/* All Category Button */}
                 <Button
                   variant={selectedCategory === 'ALL' ? 'default' : 'outline'}
@@ -567,7 +611,7 @@ export default function POSPage() {
 
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                 <Input
                   type="text"
                   placeholder="Search by name or price..."
@@ -578,16 +622,16 @@ export default function POSPage() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
                 {filteredItems.length === 0 ? (
-                  <div className="col-span-full text-center py-12 text-gray-400">
+                  <div className="col-span-full text-center py-12 text-gray-400 dark:text-gray-500">
                     <Search className="h-12 w-12 mx-auto mb-2 opacity-50" />
                     <p>No items found</p>
                     {searchQuery && (
@@ -610,38 +654,38 @@ export default function POSPage() {
                     }`}
                     onClick={() => !isOutOfStock && addToCart(item)}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-2 sm:p-3 md:p-4">
                       {isLowStock && (
-                        <div className="absolute top-2 right-2" title="Low stock">
-                          <AlertTriangle className="h-4 w-4 text-orange-500" />
+                        <div className="absolute top-1 right-1 sm:top-2 sm:right-2" title="Low stock">
+                          <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500" />
                         </div>
                       )}
                       {isOutOfStock && (
-                        <div className="absolute top-2 right-2">
-                          <div className="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
+                        <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                          <div className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-[10px] sm:text-xs font-medium px-1 sm:px-2 py-0.5 rounded">
                             Out of Stock
                           </div>
                         </div>
                       )}
                       {isManualMode && (
-                        <div className="absolute top-2 right-2">
-                          <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded" title="Manual inventory mode">
+                        <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+                          <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-[10px] sm:text-xs font-medium px-1 sm:px-2 py-0.5 rounded" title="Manual inventory mode">
                             ∞
                           </div>
                         </div>
                       )}
-                      <div className="font-medium text-sm text-gray-900 mb-1">{item.name}</div>
-                      <div className="text-lg font-bold text-blue-600">
+                      <div className="font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 mb-0.5 sm:mb-1 line-clamp-2">{item.name}</div>
+                      <div className="text-base sm:text-lg font-bold text-blue-600 dark:text-blue-400">
                         {formatCurrency(item.price)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                         GST: {item.gstRate}%
                       </div>
                       {isAutoMode && stock !== undefined && (
-                        <div className={`text-xs mt-1 ${
-                          isOutOfStock ? 'text-red-600 font-medium' : 
-                          isLowStock ? 'text-orange-600' : 
-                          'text-gray-500'
+                        <div className={`text-[10px] sm:text-xs mt-0.5 sm:mt-1 ${
+                          isOutOfStock ? 'text-red-600 dark:text-red-400 font-medium' : 
+                          isLowStock ? 'text-orange-600 dark:text-orange-400' : 
+                          'text-gray-500 dark:text-gray-400'
                         }`}>
                           Stock: {stock}
                         </div>
@@ -655,7 +699,7 @@ export default function POSPage() {
             </div>
 
             {/* Cart Section - Optimized Layout */}
-            <div className="h-[calc(100vh-10rem)] flex flex-col">
+            <div className="lg:h-[calc(100vh-10rem)] flex flex-col">
               <Card className="flex-1 flex flex-col overflow-hidden">
                 <CardHeader className="flex-shrink-0 pb-2 border-b">
                   <CardTitle className="flex items-center justify-between text-lg">
@@ -680,13 +724,33 @@ export default function POSPage() {
                   {/* Customer Details - Compact */}
                   <div className="flex-shrink-0 mb-2">
                     <div className="grid grid-cols-2 gap-2">
-                      <Input
-                        placeholder={kotEnabled ? "Table" : "Name"}
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        disabled={isKotMode}
-                        className="text-sm h-9"
-                      />
+                      {/* Table Selection for RESTAURANT, Regular Input for others */}
+                      {isRestaurant && orderType === 'DINE_IN' ? (
+                        <select
+                          value={selectedTableId || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setSelectedTableId(value === '' ? null : value);
+                          }}
+                          disabled={isKotMode}
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 h-9"
+                        >
+                          <option value="">Select Table (Optional)</option>
+                          {availableTables.map((table) => (
+                            <option key={table.id} value={table.id}>
+                              {table.tableName || `T${table.tableNumber}`} ({table.capacity} seats{table.section ? ` - ${table.section}` : ''})
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <Input
+                          placeholder={kotEnabled ? "Table" : "Name"}
+                          value={customerName}
+                          onChange={(e) => setCustomerName(e.target.value)}
+                          disabled={isKotMode}
+                          className="text-sm h-9"
+                        />
+                      )}
                       <Input
                         placeholder={kotEnabled ? "Notes" : "Phone"}
                         value={customerPhone}
@@ -699,8 +763,8 @@ export default function POSPage() {
                   
                   {/* KOT Mode Indicator - Compact */}
                   {isKotMode && linkedKotData && (
-                    <div className="bg-blue-50 border border-blue-200 rounded p-2 flex-shrink-0 mb-2">
-                      <div className="flex items-center gap-2 text-blue-800 text-xs font-medium">
+                    <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded p-2 flex-shrink-0 mb-2">
+                      <div className="flex items-center gap-2 text-blue-800 dark:text-blue-300 text-xs font-medium">
                         <TicketCheck className="h-3 w-3" />
                         <span>Bill from KOT #{linkedKotData.kotNumber}</span>
                       </div>
@@ -710,16 +774,16 @@ export default function POSPage() {
                   {/* Cart Items - Scrollable */}
                   <div className="flex-1 overflow-y-auto scrollbar-hide mb-2" style={{ minHeight: '180px' }}>
                     {cart.length === 0 ? (
-                      <div className="text-center text-gray-400 py-12 text-sm">
+                      <div className="text-center text-gray-400 dark:text-gray-500 py-12 text-sm">
                         Cart is empty
                       </div>
                     ) : (
                       <div className="space-y-1.5">
                         {cart.map((item) => (
-                          <div key={item.itemId} className="flex items-center justify-between p-2 border rounded bg-white hover:bg-gray-50">
+                          <div key={item.itemId} className="flex items-center justify-between p-2 border rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <div className="flex-1 min-w-0 mr-2">
-                              <div className="font-medium text-sm text-gray-900 truncate">{item.name}</div>
-                              <div className="text-xs text-gray-500">
+                              <div className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{item.name}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {formatCurrency(item.price)} × {item.quantity} = {formatCurrency(item.price * item.quantity)}
                               </div>
                             </div>
@@ -764,7 +828,7 @@ export default function POSPage() {
                     {/* Order Type - Compact Radio Buttons - Only for Restaurant */}
                     {isRestaurant && (
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Order Type
                         </label>
                         <div className="grid grid-cols-3 gap-1">
@@ -774,8 +838,8 @@ export default function POSPage() {
                             disabled={isKotMode}
                             className={`px-2 py-1.5 rounded border-2 text-xs font-medium transition-all ${
                               orderType === 'DINE_IN'
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'
                             } ${isKotMode ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                           >
                             Dine In
@@ -786,8 +850,8 @@ export default function POSPage() {
                             disabled={isKotMode}
                             className={`px-2 py-1.5 rounded border-2 text-xs font-medium transition-all ${
                               orderType === 'TAKEAWAY'
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'
                             } ${isKotMode ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                           >
                             Takeaway
@@ -798,8 +862,8 @@ export default function POSPage() {
                             disabled={isKotMode}
                             className={`px-2 py-1.5 rounded border-2 text-xs font-medium transition-all ${
                               orderType === 'DELIVERY'
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                                : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'
                             } ${isKotMode ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                           >
                             Delivery
@@ -811,13 +875,13 @@ export default function POSPage() {
                     {/* Payment & Discount - Two Column */}
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Payment
                         </label>
                         <select
                           value={paymentMethod}
                           onChange={(e) => setPaymentMethod(e.target.value as any)}
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                         >
                           <option value="CASH">Cash</option>
                           <option value="CARD">Card</option>
@@ -825,7 +889,7 @@ export default function POSPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                           Discount (₹)
                         </label>
                         <Input
@@ -841,22 +905,22 @@ export default function POSPage() {
 
                     {/* Bill Summary - Compact */}
                     {cart.length > 0 && (
-                      <div className="bg-gray-50 p-2 rounded space-y-1">
+                      <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-600">Subtotal:</span>
+                          <span className="text-gray-600 dark:text-gray-400">Subtotal:</span>
                           <span className="font-medium">{formatCurrency(calculateSubtotal())}</span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-gray-600">Tax (GST):</span>
+                          <span className="text-gray-600 dark:text-gray-400">Tax (GST):</span>
                           <span className="font-medium">{formatCurrency(calculateTotalGST())}</span>
                         </div>
                         {discount > 0 && (
-                          <div className="flex justify-between text-xs text-green-600">
+                          <div className="flex justify-between text-xs text-green-600 dark:text-green-400">
                             <span>Discount:</span>
                             <span>- {formatCurrency(discount)}</span>
                           </div>
                         )}
-                        <div className="flex justify-between text-base font-bold text-gray-900 pt-1 border-t border-gray-300">
+                        <div className="flex justify-between text-base font-bold text-gray-900 dark:text-gray-100 pt-1 border-t border-gray-300 dark:border-gray-600">
                           <span>Grand Total:</span>
                           <span>{formatCurrency(calculateTotal())}</span>
                         </div>
@@ -913,8 +977,8 @@ export default function POSPage() {
                         </Button>
                         
                         {showDraftMenu && draftOrders.length > 0 && (
-                          <div className="absolute bottom-full right-0 mb-1 w-72 bg-white border rounded shadow-xl z-50 max-h-64 overflow-y-auto">
-                            <div className="p-2 border-b flex justify-between items-center bg-gray-50 sticky top-0">
+                          <div className="absolute bottom-full right-0 mb-1 w-72 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded shadow-xl z-50 max-h-64 overflow-y-auto">
+                            <div className="p-2 border-b dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-700 sticky top-0">
                               <span className="font-medium text-xs">Saved Drafts</span>
                               <Button
                                 variant="ghost"
@@ -928,7 +992,7 @@ export default function POSPage() {
                             {draftOrders.map((draft) => (
                               <div
                                 key={draft.id}
-                                className="p-2 border-b last:border-b-0 hover:bg-blue-50 cursor-pointer transition-colors"
+                                className="p-2 border-b dark:border-gray-700 last:border-b-0 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition-colors"
                                 onClick={() => loadDraftOrder(draft.id)}
                               >
                                 <div className="flex justify-between items-start">
@@ -936,13 +1000,13 @@ export default function POSPage() {
                                     <div className="text-xs font-medium truncate">
                                       {draft.customerName || 'No customer name'}
                                     </div>
-                                    <div className="text-xs text-gray-500 mt-0.5">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                       {draft.cart.length} items • {formatCurrency(
                                         draft.cart.reduce((sum: number, item: CartItem) => 
                                           sum + item.price * item.quantity, 0)
                                       )}
                                     </div>
-                                    <div className="text-xs text-gray-400 mt-0.5">
+                                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                                       {new Date(draft.timestamp).toLocaleString()}
                                     </div>
                                   </div>
@@ -971,12 +1035,12 @@ export default function POSPage() {
         {/* Receipt Modal */}
         {showReceipt && lastBill && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
               <div className="p-6" id="receipt-content">
                 <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">Receipt</h2>
-                  <p className="text-sm text-gray-600">Bill #{lastBill.billNumber}</p>
-                  <p className="text-xs text-gray-500">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Receipt</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Bill #{lastBill.billNumber}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">
                     {new Date(lastBill.createdAt).toLocaleString()}
                   </p>
                   
@@ -1010,10 +1074,10 @@ export default function POSPage() {
                   </div>
                 )}
 
-                <div className="border-t border-b border-gray-300 py-4 mb-4">
+                <div className="border-t border-b border-gray-300 dark:border-gray-700 py-4 mb-4">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b">
+                      <tr className="border-b dark:border-gray-700">
                         <th className="text-left py-2">Item</th>
                         <th className="text-center py-2">Qty</th>
                         <th className="text-right py-2">Price</th>
@@ -1022,7 +1086,7 @@ export default function POSPage() {
                     </thead>
                     <tbody>
                       {lastBill.items?.map((item: any, idx: number) => (
-                        <tr key={idx} className="border-b">
+                        <tr key={idx} className="border-b dark:border-gray-700">
                           <td className="py-2">{item.item?.name || 'Item'}</td>
                           <td className="text-center">{item.quantity}</td>
                           <td className="text-right">{formatCurrency(item.price)}</td>
@@ -1047,16 +1111,16 @@ export default function POSPage() {
                     <span>{formatCurrency(lastBill.taxAmount / 2)}</span>
                   </div>
                   {lastBill.discount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-green-600 dark:text-green-400">
                       <span>Discount:</span>
                       <span>- {formatCurrency(lastBill.discount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                  <div className="flex justify-between text-lg font-bold pt-2 border-t dark:border-gray-700">
                     <span>Grand Total:</span>
                     <span>{formatCurrency(lastBill.total || lastBill.totalAmount)}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
                     <span>Payment:</span>
                     <span>{lastBill.paymentMethod}</span>
                   </div>

@@ -105,19 +105,19 @@ export default function AboutPage() {
     <ProtectedRoute>
       <DashboardLayout>
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">About & Settings</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">About & Settings</h1>
 
           {/* Business Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Building2 className="mr-2 h-5 w-5 text-blue-600" />
+                <Building2 className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
                 Business Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Business Name
                 </label>
                 {user?.role === 'OWNER' && editing ? (
@@ -149,7 +149,7 @@ export default function AboutPage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold text-gray-900">{tenantName}</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{tenantName}</span>
                     {user?.role === 'OWNER' && (
                       <Button
                         onClick={() => setEditing(true)}
@@ -166,16 +166,16 @@ export default function AboutPage() {
 
               <div className="grid md:grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Business Type
                   </label>
-                  <div className="text-gray-900 font-medium">{tenant.businessType}</div>
+                  <div className="text-gray-900 dark:text-gray-100 font-medium">{tenant.businessType}</div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Tenant ID
                   </label>
-                  <div className="text-gray-600 text-sm font-mono">
+                  <div className="text-gray-600 dark:text-gray-400 text-sm font-mono">
                     {tenant.id && tenant.id.length >= 8 
                       ? `${tenant.id.substring(0, 8)}...` 
                       : tenant.id || 'Loading...'}
@@ -186,117 +186,117 @@ export default function AboutPage() {
           </Card>
 
           {/* Subscription Details */}
-          <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <Card className="border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
             <CardHeader>
-              <CardTitle className="flex items-center text-blue-900">
-                <Crown className="mr-2 h-5 w-5 text-blue-600" />
+              <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
+                <Crown className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
                 Subscription Plan - STARTER
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Monthly Price:</span>
-                  <span className="text-2xl font-bold text-blue-900">₹999/month</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Monthly Price:</span>
+                  <span className="text-2xl font-bold text-blue-900 dark:text-blue-300">₹999/month</span>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                    <Calendar className="h-5 w-5 text-green-600" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <Calendar className="h-5 w-5 text-green-600 dark:text-green-400" />
                     <div>
-                      <div className="text-xs text-gray-600">Subscription Started</div>
-                      <div className="font-semibold text-gray-900">
+                      <div className="text-xs text-gray-600 dark:text-gray-400">Subscription Started</div>
+                      <div className="font-semibold text-gray-900 dark:text-gray-100">
                         {formatDate(subscriptionStartDate)}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                    <RefreshCw className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <RefreshCw className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     <div>
-                      <div className="text-xs text-gray-600">Next Renewal</div>
-                      <div className="font-semibold text-gray-900">
+                      <div className="text-xs text-gray-600 dark:text-gray-400">Next Renewal</div>
+                      <div className="font-semibold text-gray-900 dark:text-gray-100">
                         {formatDate(subscriptionRenewalDate)}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-blue-200 pt-4 space-y-3">
-                  <h4 className="text-sm font-semibold text-gray-900">Current Plan Usage:</h4>
+                <div className="border-t border-blue-200 dark:border-blue-800 pt-4 space-y-3">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Current Plan Usage:</h4>
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Locations</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Locations</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-32 bg-gray-200 rounded-full h-2">
-                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '100%' }}></div>
+                        <div className="w-32 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                          <div className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full" style={{ width: '100%' }}></div>
                         </div>
-                        <span className="text-sm font-semibold text-gray-900">1 / 1</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">1 / 1</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Users</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Users</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-32 bg-gray-200 rounded-full h-2">
-                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '50%' }}></div>
+                        <div className="w-32 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                          <div className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full" style={{ width: '50%' }}></div>
                         </div>
-                        <span className="text-sm font-semibold text-gray-900">1 / 2</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">1 / 2</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Items</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Items</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-32 bg-gray-200 rounded-full h-2">
-                          <div className="bg-blue-600 h-2 rounded-full" style={{ width: '10%' }}></div>
+                        <div className="w-32 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                          <div className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full" style={{ width: '10%' }}></div>
                         </div>
-                        <span className="text-sm font-semibold text-gray-900">10 / 100</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">10 / 100</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-blue-200 pt-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Features Included:</h4>
+                <div className="border-t border-blue-200 dark:border-blue-800 pt-4">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Features Included:</h4>
                   <div className="grid md:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       Basic POS & Billing
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       Items & Categories Management
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       Inventory Tracking
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       Basic Reports
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       User Management (2 users)
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                       Email Support
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-blue-200 pt-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Upgrade to Get More:</h4>
+                <div className="border-t border-blue-200 dark:border-blue-800 pt-4">
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Upgrade to Get More:</h4>
                   <div className="space-y-4">
-                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between mb-2">
-                        <h5 className="font-semibold text-gray-900">Professional Plan</h5>
-                        <span className="text-lg font-bold text-blue-900">₹2,999/month</span>
+                        <h5 className="font-semibold text-gray-900 dark:text-gray-100">Professional Plan</h5>
+                        <span className="text-lg font-bold text-blue-900 dark:text-blue-300">₹2,999/month</span>
                       </div>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                         <li>✓ Up to 5 users</li>
                         <li>✓ Up to 500 items</li>
                         <li>✓ KOT System</li>
@@ -304,12 +304,12 @@ export default function AboutPage() {
                       </ul>
                     </div>
 
-                    <div className="p-4 bg-white rounded-lg border border-gray-200">
+                    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between mb-2">
-                        <h5 className="font-semibold text-gray-900">Enterprise Plan</h5>
-                        <span className="text-lg font-bold text-blue-900">₹9,999/month</span>
+                        <h5 className="font-semibold text-gray-900 dark:text-gray-100">Enterprise Plan</h5>
+                        <span className="text-lg font-bold text-blue-900 dark:text-blue-300">₹9,999/month</span>
                       </div>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                      <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                         <li>✓ Unlimited users & items</li>
                         <li>✓ Multi-location support</li>
                         <li>✓ Custom integrations</li>
@@ -331,45 +331,45 @@ export default function AboutPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Phone className="mr-2 h-5 w-5 text-green-600" />
+                <Phone className="mr-2 h-5 w-5 text-green-600 dark:text-green-400" />
                 Support & Contact
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Need help? Our support team is here to assist you with any questions or issues.
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <Mail className="h-5 w-5 text-blue-600" />
+                <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <div className="text-sm text-gray-600">Email Support</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Email Support</div>
                     <a 
                       href="mailto:support@pavakie.com" 
-                      className="font-semibold text-blue-600 hover:underline"
+                      className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                     >
                       support@pavakie.com
                     </a>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                  <Phone className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <Phone className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <div>
-                    <div className="text-sm text-gray-600">Phone Support</div>
-                    <div className="font-semibold text-gray-900">
-                      <a href="tel:+918608084220" className="hover:text-green-600">+91 8608084220</a>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">Phone Support</div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-100">
+                      <a href="tel:+918608084220" className="hover:text-green-600 dark:hover:text-green-400">+91 8608084220</a>
                       {' • '}
-                      <a href="tel:+919159441887" className="hover:text-green-600">+91 9159441887</a>
+                      <a href="tel:+919159441887" className="hover:text-green-600 dark:hover:text-green-400">+91 9159441887</a>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t pt-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Support Hours</h4>
-                <p className="text-sm text-gray-600">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Support Hours</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Monday - Saturday: 9:00 AM - 6:00 PM IST<br />
                   Sunday: Closed
                 </p>

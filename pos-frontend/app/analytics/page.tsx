@@ -199,7 +199,7 @@ function AnalyticsContent() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading analytics data...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading analytics data...</p>
         </div>
       </div>
     );
@@ -208,15 +208,15 @@ function AnalyticsContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Advanced Analytics</h1>
-          <p className="text-gray-600 mt-1">Deep insights into your business performance</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Advanced Analytics</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">Deep insights into your business performance</p>
         </div>
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500"
         >
           <option value="7d">Last 7 Days</option>
           <option value="30d">Last 30 Days</option>
@@ -226,13 +226,13 @@ function AnalyticsContent() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Revenue Growth</span>
-            <TrendingUp className="w-5 h-5 text-green-600" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">Revenue Growth</span>
+            <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {comparativeReports?.monthOverMonth?.revenueGrowth?.toFixed(1) || 0}%
           </div>
           <div className={`text-xs mt-1 ${(comparativeReports?.monthOverMonth?.revenueGrowth || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -240,75 +240,75 @@ function AnalyticsContent() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Profit Margin</span>
-            <DollarSign className="w-5 h-5 text-blue-600" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">Profit Margin</span>
+            <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {profitMargin?.profitMargin?.toFixed(1) || 0}%
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             ₹{(profitMargin?.profit || 0).toLocaleString()} profit
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Customer Retention</span>
-            <Users className="w-5 h-5 text-purple-600" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">Customer Retention</span>
+            <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {customerRetention?.repeatRate?.toFixed(1) || 0}%
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {customerRetention?.repeatCustomers || 0} repeat customers
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Dead Stock Items</span>
-            <Package className="w-5 h-5 text-orange-600" />
+            <span className="text-sm text-gray-600 dark:text-gray-400">Dead Stock Items</span>
+            <Package className="w-5 h-5 text-orange-600 dark:text-orange-400" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{deadStock.length}</div>
-          <div className="text-xs text-orange-600 mt-1">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{deadStock.length}</div>
+          <div className="text-xs text-orange-600 dark:text-orange-400 mt-1">
             {deadStock.filter(item => item.status === 'NEVER_SOLD').length} never sold
           </div>
         </div>
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Revenue Trends */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Revenue Trends</h3>
-            <TrendingUp className="w-5 h-5 text-blue-600" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Revenue Trends</h3>
+            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           {revenueTrends.length > 0 ? (
             <div className="space-y-2">
-              <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 font-medium mb-2 px-2">
+              <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 dark:text-gray-400 font-medium mb-2 px-2">
                 <div>Date</div>
                 <div className="text-right">Revenue</div>
                 <div className="text-right">Orders</div>
               </div>
               <div className="max-h-56 overflow-y-auto space-y-1">
                 {revenueTrends.slice(-7).reverse().map((trend, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-2 text-sm p-2 bg-gray-50 rounded">
-                    <div className="text-gray-700">{new Date(trend.period).toLocaleDateString()}</div>
-                    <div className="text-right font-semibold text-gray-900">
+                  <div key={index} className="grid grid-cols-3 gap-2 text-sm p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                    <div className="text-gray-700 dark:text-gray-300">{new Date(trend.period).toLocaleDateString()}</div>
+                    <div className="text-right font-semibold text-gray-900 dark:text-gray-100">
                       ₹{trend.revenue.toLocaleString()}
                     </div>
-                    <div className="text-right text-gray-600">{trend.orderCount}</div>
+                    <div className="text-right text-gray-600 dark:text-gray-400">{trend.orderCount}</div>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <div className="text-center text-gray-500">
-                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 <p>No revenue data available</p>
               </div>
             </div>
@@ -316,10 +316,10 @@ function AnalyticsContent() {
         </div>
 
         {/* Category Performance */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Category Performance</h3>
-            <DollarSign className="w-5 h-5 text-green-600" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Category Performance</h3>
+            <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
           {categoryPerformance.length > 0 ? (
             <div className="space-y-4">
@@ -328,8 +328,8 @@ function AnalyticsContent() {
                 return (
                   <div key={item.category}>
                     <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-gray-700">{item.category}</span>
-                      <span className="font-semibold text-gray-900">
+                      <span className="text-gray-700 dark:text-gray-300">{item.category}</span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">
                         ₹{item.revenue.toLocaleString()} ({item.revenuePercentage.toFixed(1)}%)
                       </span>
                     </div>
@@ -344,9 +344,9 @@ function AnalyticsContent() {
               })}
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <div className="text-center text-gray-500">
-                <PieChart className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <PieChart className="w-12 h-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 <p>No category data available</p>
               </div>
             </div>
@@ -355,12 +355,12 @@ function AnalyticsContent() {
       </div>
 
       {/* Charts Row 2 */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Peak Hours Analysis */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Peak Hours</h3>
-            <Calendar className="w-5 h-5 text-purple-600" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Peak Hours</h3>
+            <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           </div>
           {peakHours.length > 0 ? (
             <div className="space-y-3">
@@ -371,16 +371,16 @@ function AnalyticsContent() {
                 
                 return (
                   <div key={slot.hour} className="flex items-center gap-3">
-                    <div className="text-sm text-gray-700 w-20">{hourDisplay}</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300 w-20">{hourDisplay}</div>
                     <div className="flex-1">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
                           style={{ width: `${percentage}%` }}
                         ></div>
                       </div>
                     </div>
-                    <div className="text-sm font-semibold text-gray-900 w-20 text-right">
+                    <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 w-20 text-right">
                       {slot.orderCount} orders
                     </div>
                     <div className={`text-xs px-2 py-1 rounded ${
@@ -396,9 +396,9 @@ function AnalyticsContent() {
               })}
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <div className="text-center text-gray-500">
-                <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 <p>No peak hours data available</p>
               </div>
             </div>
@@ -406,25 +406,25 @@ function AnalyticsContent() {
         </div>
 
         {/* Top Performing Items (ABC Analysis - Class A) */}
-        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Top Performing Items (Class A)</h3>
-            <Package className="w-5 h-5 text-orange-600" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Top Performing Items (Class A)</h3>
+            <Package className="w-5 h-5 text-orange-600 dark:text-orange-400" />
           </div>
           {itemProfits.length > 0 ? (
             <div className="space-y-3">
               {itemProfits.map((item, index) => (
                 <div
                   key={item.itemId}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-blue-100 text-blue-600 font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm">
+                    <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm">
                       {index + 1}
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">{item.itemName}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">{item.itemName}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         Revenue: ₹{item.revenue.toLocaleString()} | Profit: ₹{item.profit.toLocaleString()}
                       </div>
                     </div>
@@ -433,15 +433,15 @@ function AnalyticsContent() {
                     <div className={`text-sm font-semibold ${(item.profitMargin ?? 0) > 40 ? 'text-green-600' : 'text-blue-600'}`}>
                       {(item.profitMargin ?? 0).toFixed(1)}%
                     </div>
-                    <div className="text-xs text-gray-500">{item.quantitySold} sold</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">{item.quantitySold} sold</div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-              <div className="text-center text-gray-500">
-                <Package className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+            <div className="h-64 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <Package className="w-12 h-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 <p>No item profit data available</p>
               </div>
             </div>
@@ -450,52 +450,52 @@ function AnalyticsContent() {
       </div>
 
       {/* Customer Insights */}
-      <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Customer Insights</h3>
-          <Users className="w-5 h-5 text-blue-600" />
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Customer Insights</h3>
+          <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="text-center p-4 bg-blue-50 rounded-lg">
-            <div className="text-3xl font-bold text-blue-600 mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
               {customerRetention?.totalCustomers?.toLocaleString() || 0}
             </div>
-            <div className="text-sm text-gray-600">Total Customers</div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Total Customers</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {customerRetention?.repeatCustomers || 0} repeat
             </div>
           </div>
-          <div className="text-center p-4 bg-green-50 rounded-lg">
-            <div className="text-3xl font-bold text-green-600 mb-1">
+          <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
               ₹{customerRetention?.averageLifetimeValue?.toLocaleString() || 0}
             </div>
-            <div className="text-sm text-gray-600">Avg. Lifetime Value</div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Avg. Lifetime Value</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {customerRetention?.repeatRate?.toFixed(1) || 0}% retention rate
             </div>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg">
-            <div className="text-3xl font-bold text-purple-600 mb-1">
+          <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">
               {customerRetention?.averageOrdersPerCustomer?.toFixed(1) || 0}
             </div>
-            <div className="text-sm text-gray-600">Avg. Orders per Customer</div>
-            <div className="text-xs text-gray-500 mt-1">Lifetime average</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Avg. Orders per Customer</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Lifetime average</div>
           </div>
         </div>
       </div>
 
       {/* Dead Stock Alerts */}
       {deadStock.length > 0 && (
-        <div className="bg-white p-6 rounded-lg shadow border border-orange-200">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow border border-orange-200 dark:border-orange-800">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-600" />
-              <h3 className="font-semibold text-gray-900">Dead Stock Alerts</h3>
+              <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Dead Stock Alerts</h3>
             </div>
-            <span className="text-sm text-orange-600 font-medium">{deadStock.length} items</span>
+            <span className="text-sm text-orange-600 dark:text-orange-400 font-medium">{deadStock.length} items</span>
           </div>
           <div className="space-y-2">
-            <div className="grid grid-cols-5 gap-2 text-xs text-gray-600 font-medium mb-2 px-2">
+            <div className="grid grid-cols-5 gap-2 text-xs text-gray-600 dark:text-gray-400 font-medium mb-2 px-2">
               <div>Item Name</div>
               <div>Code</div>
               <div>Category</div>
@@ -504,11 +504,11 @@ function AnalyticsContent() {
             </div>
             <div className="max-h-48 overflow-y-auto space-y-1">
               {deadStock.map((item) => (
-                <div key={item.itemId} className="grid grid-cols-5 gap-2 text-sm p-2 bg-orange-50 rounded">
-                  <div className="text-gray-700 truncate">{item.itemName}</div>
-                  <div className="text-gray-600">{item.itemCode}</div>
-                  <div className="text-gray-600 truncate">{item.category}</div>
-                  <div className="text-right font-semibold text-gray-900">{item.currentStock}</div>
+                <div key={item.itemId} className="grid grid-cols-5 gap-2 text-sm p-2 bg-orange-50 dark:bg-orange-900/20 rounded">
+                  <div className="text-gray-700 dark:text-gray-300 truncate">{item.itemName}</div>
+                  <div className="text-gray-600 dark:text-gray-400">{item.itemCode}</div>
+                  <div className="text-gray-600 dark:text-gray-400 truncate">{item.category}</div>
+                  <div className="text-right font-semibold text-gray-900 dark:text-gray-100">{item.currentStock}</div>
                   <div className="text-right">
                     <span className={`text-xs px-2 py-1 rounded ${
                       item.status === 'NEVER_SOLD' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
@@ -530,7 +530,7 @@ function AnalyticsContent() {
             <h3 className="font-semibold text-gray-900">Comparative Performance</h3>
             <BarChart3 className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Month over Month */}
             <div className="space-y-3">
               <h4 className="text-sm font-medium text-gray-700">Month over Month</h4>

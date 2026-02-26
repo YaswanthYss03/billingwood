@@ -251,8 +251,8 @@ export default function OrdersPage() {
           {/* Header */}
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Order View</h1>
-              <p className="text-gray-500 mt-1">View and manage all orders</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Order View</h1>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">View and manage all orders</p>
             </div>
             <Button
               onClick={() => loadOrders(true)}
@@ -270,10 +270,10 @@ export default function OrdersPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-500">Total Orders</div>
-                    <div className="text-3xl font-bold text-gray-900 mt-1">{totalOrders}</div>
+                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Orders</div>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">{totalOrders}</div>
                   </div>
-                  <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
                     <ShoppingBag className="h-6 w-6 text-blue-600" />
                   </div>
                 </div>
@@ -283,10 +283,10 @@ export default function OrdersPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-500">Total Revenue</div>
-                    <div className="text-3xl font-bold text-green-600 mt-1">{formatCurrency(totalRevenue)}</div>
+                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</div>
+                    <div className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{formatCurrency(totalRevenue)}</div>
                   </div>
-                  <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="h-12 w-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                     <DollarSign className="h-6 w-6 text-green-600" />
                   </div>
                 </div>
@@ -296,10 +296,10 @@ export default function OrdersPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-gray-500">Cancelled Orders</div>
-                    <div className="text-3xl font-bold text-red-600 mt-1">{cancelledOrders}</div>
+                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Cancelled Orders</div>
+                    <div className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{cancelledOrders}</div>
                   </div>
-                  <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <div className="h-12 w-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                     <XCircle className="h-6 w-6 text-red-600" />
                   </div>
                 </div>
@@ -314,7 +314,7 @@ export default function OrdersPage() {
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search Input */}
                 <div className="relative flex-1 min-w-[280px]">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                   <Input
                     placeholder="Search orders..."
                     value={searchQuery}
@@ -324,7 +324,7 @@ export default function OrdersPage() {
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -336,7 +336,7 @@ export default function OrdersPage() {
                   <select
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-                    className="h-10 pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="h-10 pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="TODAY">Today</option>
                     <option value="YESTERDAY">Yesterday</option>
@@ -344,19 +344,19 @@ export default function OrdersPage() {
                     <option value="THIS_MONTH">This Month</option>
                     <option value="CUSTOM">Custom Range</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 pointer-events-none" />
                 </div>
 
                 {/* Order Type Segmented Pills */}
-                <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                   {(['ALL', 'DINE_IN', 'TAKEAWAY', 'DELIVERY'] as OrderType[]).map((type) => (
                     <button
                       key={type}
                       onClick={() => setOrderTypeFilter(type)}
                       className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
                         orderTypeFilter === type
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-gray-600 hover:text-gray-900'
+                          ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                       }`}
                     >
                       {type === 'ALL' ? 'All' : type.replace('_', '-')}
@@ -369,7 +369,7 @@ export default function OrdersPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as OrderStatus)}
-                    className="h-10 pl-3 pr-10 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="h-10 pl-3 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="COMPLETED">Completed</option>
@@ -544,12 +544,12 @@ export default function OrdersPage() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-gray-400 dark:text-gray-500">
                   <RefreshCw className="h-12 w-12 mx-auto mb-2 animate-spin" />
                   <p>Loading orders...</p>
                 </div>
               ) : currentOrders.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-gray-400 dark:text-gray-500">
                   <Filter className="h-12 w-12 mx-auto mb-2 opacity-50" />
                   <p>No orders found</p>
                   <p className="text-sm mt-1">Try adjusting your filters</p>
@@ -580,7 +580,7 @@ export default function OrdersPage() {
                             <TableCell>
                               <div className="text-sm">
                                 <div>{new Date(order.createdAt).toLocaleDateString()}</div>
-                                <div className="text-gray-500">
+                                <div className="text-gray-500 dark:text-gray-400">
                                   {new Date(order.createdAt).toLocaleTimeString()}
                                 </div>
                               </div>
@@ -588,7 +588,7 @@ export default function OrdersPage() {
                             <TableCell>
                               <div className="text-sm">
                                 <div className="font-medium">{order.customerName || '-'}</div>
-                                <div className="text-gray-500">{order.customerPhone || '-'}</div>
+                                <div className="text-gray-500 dark:text-gray-400">{order.customerPhone || '-'}</div>
                               </div>
                             </TableCell>
                             <TableCell>

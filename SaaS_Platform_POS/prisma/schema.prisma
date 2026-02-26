@@ -76,6 +76,8 @@ model Tenant {
   purchases   Purchase[]
   bills       Bill[]
   kots        KOT[]
+  tables      Table[]
+  tableReservations TableReservation[]
   printJobs   PrintJob[]
   auditLogs   AuditLog[]
   loyaltyTransactions LoyaltyTransaction[]
@@ -677,9 +679,10 @@ model KOT {
   tenantId    String     @map("tenant_id")
   userId      String     @map("user_id")
   locationId  String?    @map("location_id")
+  tableId     String?    @map("table_id")
   
   kotNumber   String     @unique @map("kot_number")
-  tableNumber String?    @map("table_number")
+  tableNumber String?    @map("table_number") // Legacy field, kept for backward compatibility
   
   status      KOTStatus  @default(PENDING)
   
@@ -694,6 +697,7 @@ model KOT {
   tenant      Tenant     @relation(fields: [tenantId], references: [id])
   user        User       @relation(fields: [userId], references: [id])
   location    Location?  @relation(fields: [locationId], references: [id])
+  table       Table?     @relation(fields: [tableId], references: [id])
   items       KOTItem[]
   bills       Bill[]
   printJobs   PrintJob[]
@@ -701,6 +705,7 @@ model KOT {
   @@index([tenantId])
   @@index([userId])
   @@index([locationId])
+  @@index([tableId])
   @@map("kots")
 }
 
@@ -852,10 +857,138 @@ model Location {
   inventoryBatches InventoryBatch[]
   stockTransfersFrom StockTransfer[] @relation("TransferFrom")
   stockTransfersTo   StockTransfer[] @relation("TransferTo")
+  tables      Table[]
+  tableReservations TableReservation[]
   
   @@unique([tenantId, code])
   @@index([tenantId])
   @@map("locations")
+}
+
+// ============================================
+// TABLE MANAGEMENT (Restaurant/Cafe/Hotel)
+// ============================================
+
+enum TableStatus {
+  FREE
+  OCCUPIED
+  RESERVED
+  BILLED
+  CLEANING
+  OUT_OF_SERVICE
+}
+
+enum ReservationStatus {
+  PENDING       // Reservation created but not yet confirmed
+  CONFIRMED     // Reservation confirmed by staff/customer
+  SEATED        // Customer has arrived and been seated
+  CANCELLED     // Reservation cancelled
+  NO_SHOW       // Customer didn't show up
+  COMPLETED     // Reservation fulfilled successfully
+}
+
+model Table {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  locationId  String   @map("location_id")
+  
+  // Table Details
+  tableNumber String   @map("table_number")
+  tableName   String?  @map("table_name")
+  capacity    Int      @default(4)
+  section     String?  // "Indoor", "Outdoor", "VIP", "Terrace"
+  floor       String?  // "Ground Floor", "First Floor"
+  
+  // Status Tracking
+  status      TableStatus @default(FREE)
+  currentKotId String?  @map("current_kot_id")
+  occupiedAt  DateTime? @map("occupied_at")
+  lastBilledAt DateTime? @map("last_billed_at")
+  
+  // Layout/Visual (per location)
+  positionX   Int?     @map("position_x")
+  positionY   Int?     @map("position_y")
+  layoutZone  String?  @map("layout_zone")
+  rotation    Int?     @default(0) // Rotation angle 0-360 degrees
+  width       Int?     @default(80) // Visual width in pixels
+  height      Int?     @default(80) // Visual height in pixels
+  shape       String?  @default("rectangle") // rectangle, circle, square
+  
+  // Metadata
+  qrCode      String?  @unique @map("qr_code")
+  notes       String?
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  location    Location @relation(fields: [locationId], references: [id])
+  kots        KOT[]
+  reservations TableReservation[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  
+  @@unique([locationId, tableNumber])
+  @@index([tenantId, locationId, status])
+  @@index([locationId, status])
+  @@map("tables")
+}
+
+// ============================================
+// TABLE RESERVATIONS
+// ============================================
+
+model TableReservation {
+  id         String   @id @default(cuid())
+  tenantId   String   @map("tenant_id")
+  locationId String   @map("location_id")
+  tableId    String   @map("table_id")
+  
+  // Reservation Details
+  customerName  String  @map("customer_name")
+  customerPhone String  @map("customer_phone")
+  customerEmail String? @map("customer_email")
+  
+  // Mandatory Fields
+  numberOfPeople      Int       @map("number_of_people") // Number of seats required
+  reservationDate     DateTime  @map("reservation_date") // Date of reservation
+  reservationTime     DateTime  @map("reservation_time") // Time of reservation
+  duration            Int?      @default(120) // Duration in minutes (default 2 hours)
+  
+  // Special Arrangements (Mandatory)
+  specialRequirements String?   @map("special_requirements") // Any special arrangements needed
+  
+  // Pre-order (Optional)
+  preOrderItems Json?  @map("pre_order_items") // Array of items to be prepared ahead
+  preOrderNotes String? @map("pre_order_notes")
+  
+  // Status Management
+  status            ReservationStatus @default(PENDING)
+  confirmationCode  String?  @unique @map("confirmation_code")
+  confirmedAt       DateTime? @map("confirmed_at")
+  arrivedAt         DateTime? @map("arrived_at") // When customer actually arrived
+  cancelledAt       DateTime? @map("cancelled_at")
+  cancellationReason String? @map("cancellation_reason")
+  
+  // Metadata
+  notes       String?
+  createdBy   String?  @map("created_by") // User ID who created the reservation
+  
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  location    Location @relation(fields: [locationId], references: [id])
+  table       Table    @relation(fields: [tableId], references: [id])
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  
+  @@index([tenantId, status, reservationDate])
+  @@index([locationId, reservationDate])
+  @@index([tableId, status])
+  @@index([customerPhone])
+  @@map("table_reservations")
 }
 
 // ============================================

@@ -252,29 +252,30 @@ export default function KOTPage() {
   return (
     <ProtectedRoute>
       <DashboardLayout>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Kitchen Order Tickets</h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Kitchen Order Tickets</h1>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {viewMode === 'batch' 
                   ? 'Batch view - Item summary with pending orders and batch acknowledgment'
                   : 'Individual KOT view - Track specific orders'}
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <TicketCheck className="h-8 w-8 text-blue-600" />
+              <TicketCheck className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
             </div>
           </div>
 
           {/* View Toggle */}
-          <div className="flex items-center justify-between bg-white rounded-lg border p-4">
-            <div className="flex gap-2">
+          <div className="flex flex-col gap-3 sm:gap-4 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 p-3 sm:p-4">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={filter === '' ? 'default' : 'outline'}
                 onClick={() => setFilter('')}
                 size="sm"
+                className="text-xs sm:text-sm"
               >
                 All
               </Button>
@@ -282,6 +283,7 @@ export default function KOTPage() {
                 variant={filter === 'PENDING' ? 'default' : 'outline'}
                 onClick={() => setFilter('PENDING')}
                 size="sm"
+                className="text-xs sm:text-sm"
               >
                 Pending
               </Button>
@@ -289,6 +291,7 @@ export default function KOTPage() {
                 variant={filter === 'PREPARING' ? 'default' : 'outline'}
                 onClick={() => setFilter('PREPARING')}
                 size="sm"
+                className="text-xs sm:text-sm"
               >
                 Preparing
               </Button>
@@ -296,19 +299,20 @@ export default function KOTPage() {
                 variant={filter === 'READY' ? 'default' : 'outline'}
                 onClick={() => setFilter('READY')}
                 size="sm"
+                className="text-xs sm:text-sm"
               >
                 Ready
               </Button>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               {viewMode === 'batch' && (
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">Sort by:</span>
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <span className="text-gray-600 dark:text-gray-400 whitespace-nowrap">Sort by:</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="border rounded px-2 py-1 text-sm"
+                    className="border dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded px-2 py-1 text-xs sm:text-sm flex-1 sm:flex-initial"
                   >
                     <option value="quantity">Quantity (High → Low)</option>
                     <option value="time">Time (Oldest First)</option>
@@ -317,28 +321,30 @@ export default function KOTPage() {
                 </div>
               )}
               
-              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode('batch')}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium transition-all ${
+                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all ${
                     viewMode === 'batch'
-                      ? 'bg-white text-blue-600 shadow'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                   }`}
                 >
-                  <List className="h-4 w-4" />
-                  Batch View
+                  <List className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Batch View</span>
+                  <span className="sm:hidden">Batch</span>
                 </button>
                 <button
                   onClick={() => setViewMode('kot')}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium transition-all ${
+                  className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded text-xs sm:text-sm font-medium transition-all ${
                     viewMode === 'kot'
-                      ? 'bg-white text-blue-600 shadow'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                   }`}
                 >
-                  <Grid className="h-4 w-4" />
-                  Individual KOTs
+                  <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Individual KOTs</span>
+                  <span className="sm:hidden">KOTs</span>
                 </button>
               </div>
             </div>
@@ -348,18 +354,18 @@ export default function KOTPage() {
           {viewMode === 'batch' && (
             <div className="space-y-4">
               {batchItems.length === 0 ? (
-                <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
-                  <TicketCheck className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                  <TicketCheck className="h-12 w-12 mx-auto mb-3 text-gray-400 dark:text-gray-600" />
                   <p className="text-lg font-medium">No active orders</p>
                   <p className="text-sm">All caught up!</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-[35%_65%] gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[35%_65%] gap-4 sm:gap-6">
                   {/* Left Column: Item Summary (Read-Only) */}
-                  <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border-l-4 border-blue-500 sticky top-4">
-                      <h2 className="text-lg font-bold text-gray-900 mb-1">Items Overview</h2>
-                      <p className="text-sm text-gray-600">Real-time summary by item</p>
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-3 sm:p-4 border-l-4 border-blue-500 dark:border-blue-400 lg:sticky lg:top-4">
+                      <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">Items Overview</h2>
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Real-time summary by item</p>
                     </div>
                     
                     <div className="space-y-3">
@@ -374,23 +380,23 @@ export default function KOTPage() {
                   </div>
 
                   {/* Right Column: KOT Lists by Status */}
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {/* Pending KOTs Section */}
                     {pendingKots.length > 0 && (
                       <div className="space-y-3">
-                        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-4 border-l-4 border-yellow-500">
-                          <div className="flex items-center justify-between mb-3">
+                        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg p-3 sm:p-4 border-l-4 border-yellow-500 dark:border-yellow-400">
+                          <div className="flex flex-col gap-3">
                             <div>
-                              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <AlertCircle className="h-6 w-6 text-yellow-600" />
-                                Pending Orders ({pendingKots.length} KOTs)
+                              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400" />
+                                <span>Pending Orders ({pendingKots.length} KOTs)</span>
                               </h2>
-                              <p className="text-sm text-gray-600 mt-1">New orders waiting to be acknowledged</p>
+                              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">New orders waiting to be acknowledged</p>
                             </div>
                             <Button
                               onClick={handleNotedByChef}
                               disabled={notingByChef}
-                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                               {notingByChef ? (
                                 <>
@@ -420,14 +426,14 @@ export default function KOTPage() {
                     {/* Preparing KOTs Section */}
                     {preparingKots.length > 0 && (
                       <div className="space-y-3">
-                        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border-l-4 border-blue-500">
-                          <div className="flex items-center gap-3">
-                            <Clock className="h-6 w-6 text-blue-600" />
+                        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-3 sm:p-4 border-l-4 border-blue-500 dark:border-blue-400">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
                             <div>
-                              <h2 className="text-xl font-bold text-gray-900">
+                              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                                 Currently Preparing ({preparingKots.length} KOTs)
                               </h2>
-                              <p className="text-sm text-gray-600 mt-1">Orders in progress</p>
+                              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">Orders in progress</p>
                             </div>
                           </div>
                         </div>
@@ -448,14 +454,14 @@ export default function KOTPage() {
                     {/* Ready KOTs Section */}
                     {readyKots.length > 0 && (
                       <div className="space-y-3">
-                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
-                          <div className="flex items-center gap-3">
-                            <CheckCircle className="h-6 w-6 text-green-600" />
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-3 sm:p-4 border-l-4 border-green-500 dark:border-green-400">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
                             <div>
-                              <h2 className="text-xl font-bold text-gray-900">
+                              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                                 Ready to Serve ({readyKots.length} KOTs)
                               </h2>
-                              <p className="text-sm text-gray-600 mt-1">Completed orders ready for service</p>
+                              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">Completed orders ready for service</p>
                             </div>
                           </div>
                         </div>
@@ -475,8 +481,8 @@ export default function KOTPage() {
 
                     {/* Empty State */}
                     {pendingKots.length === 0 && preparingKots.length === 0 && readyKots.length === 0 && (
-                      <div className="text-center py-8 text-gray-500 bg-white rounded-lg border">
-                        <TicketCheck className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700">
+                        <TicketCheck className="h-12 w-12 mx-auto mb-3 text-gray-400 dark:text-gray-600" />
                         <p className="text-lg font-medium">No active orders</p>
                         <p className="text-sm">All caught up!</p>
                       </div>
@@ -489,12 +495,12 @@ export default function KOTPage() {
 
           {/* KOT View */}
           {viewMode === 'kot' && (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {kots.map((kot) => (
                 <Card key={kot.id} className="border-2 hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-2 sm:pb-3">
                     <CardTitle className="flex items-center justify-between">
-                      <span className="text-lg">KOT #{kot.kotNumber}</span>
+                      <span className="text-base sm:text-lg">KOT #{kot.kotNumber}</span>
                       <span
                         className={`text-xs px-3 py-1 rounded-full border font-semibold ${
                           STATUS_COLORS[kot.status as keyof typeof STATUS_COLORS]
@@ -505,38 +511,46 @@ export default function KOTPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="text-sm text-gray-900">
+                    <div className="text-sm text-gray-900 dark:text-gray-100">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">Table:</span>
-                        <span className="text-gray-600">{kot.tableNumber || 'N/A'}</span>
+                        {kot.table ? (
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {kot.table.tableName || `T${kot.table.tableNumber}`}
+                            {kot.table.section && ` (${kot.table.section})`}
+                            <span className="text-xs ml-1">• {kot.table.capacity} seats</span>
+                          </span>
+                        ) : (
+                          <span className="text-gray-600 dark:text-gray-400">{kot.tableNumber || 'N/A'}</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <Clock className="h-3 w-3 text-gray-400" />
-                        <span className="text-gray-500 text-xs">
+                        <Clock className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                        <span className="text-gray-500 dark:text-gray-400 text-xs">
                           {formatDateTime(kot.createdAt)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="border-t pt-3">
-                      <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <div className="border-t dark:border-gray-700 pt-3">
+                      <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
                         <span>Items</span>
-                        <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">
+                        <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300">
                           {kot.items.length}
                         </span>
                       </div>
                       <div className="space-y-2">
                         {kot.items.map((item: any, index: number) => (
-                          <div key={index} className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded">
-                            <span className="text-sm font-medium text-gray-900">{item.item.name}</span>
-                            <span className="text-sm font-bold text-blue-600">×{item.quantity}</span>
+                          <div key={index} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded">
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.item.name}</span>
+                            <span className="text-sm font-bold text-blue-600 dark:text-blue-400">×{item.quantity}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {kot.notes && (
-                      <div className="text-xs text-gray-600 bg-yellow-50 border border-yellow-200 rounded p-2">
+                      <div className="text-xs text-gray-600 dark:text-gray-300 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded p-2">
                         <span className="font-medium">Note:</span> {kot.notes}
                       </div>
                     )}
@@ -639,93 +653,93 @@ function ItemSummaryCard({
   let bgColor = '';
   
   if (isPendingUrgent) {
-    borderColor = 'border-red-400 border-l-4';
-    bgColor = 'bg-red-50/30';
+    borderColor = 'border-red-400 dark:border-red-500 border-l-4';
+    bgColor = 'bg-red-50/30 dark:bg-red-900/10';
   } else if (item.pendingQuantity > 0) {
-    borderColor = 'border-yellow-400 border-l-4';
-    bgColor = 'bg-yellow-50/30';
+    borderColor = 'border-yellow-400 dark:border-yellow-500 border-l-4';
+    bgColor = 'bg-yellow-50/30 dark:bg-yellow-900/10';
   } else if (item.preparingQuantity > 0) {
-    borderColor = 'border-blue-400 border-l-4';
-    bgColor = 'bg-blue-50/30';
+    borderColor = 'border-blue-400 dark:border-blue-500 border-l-4';
+    bgColor = 'bg-blue-50/30 dark:bg-blue-900/10';
   } else if (item.readyQuantity > 0) {
-    borderColor = 'border-green-400 border-l-4';
-    bgColor = 'bg-green-50/30';
+    borderColor = 'border-green-400 dark:border-green-500 border-l-4';
+    bgColor = 'bg-green-50/30 dark:bg-green-900/10';
   }
   
   return (
     <Card className={`border-2 ${borderColor} ${bgColor}`}>
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         {/* Item Name and Info */}
         <div className="flex items-center gap-2 mb-2">
-          <h3 className="text-base font-bold text-gray-900">{item.itemName}</h3>
+          <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100">{item.itemName}</h3>
           {isPendingUrgent && (
-            <span className="flex items-center gap-1 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold animate-pulse">
-              <AlertCircle className="h-3 w-3" />
+            <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-1.5 sm:px-2 py-0.5 rounded-full font-semibold animate-pulse">
+              <AlertCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               URGENT
             </span>
           )}
         </div>
         
-        <div className="flex items-center gap-2 mb-3 text-xs text-gray-600 flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 flex-wrap">
           <span className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
             {timeSince}
           </span>
-          <span className="text-gray-400">•</span>
-          <span className="bg-gray-100 px-2 py-0.5 rounded">
+          <span className="text-gray-400 dark:text-gray-600">•</span>
+          <span className="bg-gray-100 dark:bg-gray-700 px-1.5 sm:px-2 py-0.5 rounded">
             {item.category}
           </span>
-          <span className="text-gray-400">•</span>
-          <span className="font-semibold text-gray-700">
+          <span className="text-gray-400 dark:text-gray-600">•</span>
+          <span className="font-semibold text-gray-700 dark:text-gray-300">
             Total: {item.totalQuantity}
           </span>
         </div>
         
         {/* Three Status Pills */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
           {/* Pending Pill */}
-          <div className={`flex flex-col items-center p-3 rounded-lg border ${
+          <div className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border ${
             item.pendingQuantity > 0 
-              ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300' 
-              : 'bg-gray-50 border-gray-200'
+              ? 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-300 dark:border-yellow-600' 
+              : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
           }`}>
-            <div className="text-xs font-semibold text-gray-600 mb-1">TODO</div>
-            <div className={`text-2xl font-bold ${
-              item.pendingQuantity > 0 ? 'text-yellow-600' : 'text-gray-400'
+            <div className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">TODO</div>
+            <div className={`text-lg sm:text-xl md:text-2xl font-bold ${
+              item.pendingQuantity > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400 dark:text-gray-600'
             }`}>
               {item.pendingQuantity}
             </div>
-            <div className="text-xs text-gray-500 mt-1">TODO</div>
+            <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">TODO</div>
           </div>
           
           {/* Preparing Pill */}
-          <div className={`flex flex-col items-center p-3 rounded-lg border ${
+          <div className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border ${
             item.preparingQuantity > 0 
-              ? 'bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300' 
-              : 'bg-gray-50 border-gray-200'
+              ? 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border-blue-300 dark:border-blue-600' 
+              : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
           }`}>
-            <div className="text-xs font-semibold text-gray-600 mb-1">DOING</div>
-            <div className={`text-2xl font-bold ${
-              item.preparingQuantity > 0 ? 'text-blue-600' : 'text-gray-400'
+            <div className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">DOING</div>
+            <div className={`text-lg sm:text-xl md:text-2xl font-bold ${
+              item.preparingQuantity > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-600'
             }`}>
               {item.preparingQuantity}
             </div>
-            <div className="text-xs text-gray-500 mt-1">DOING</div>
+            <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">DOING</div>
           </div>
           
           {/* Ready Pill */}
-          <div className={`flex flex-col items-center p-3 rounded-lg border ${
+          <div className={`flex flex-col items-center p-2 sm:p-3 rounded-lg border ${
             item.readyQuantity > 0 
-              ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300' 
-              : 'bg-gray-50 border-gray-200'
+              ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-300 dark:border-green-600' 
+              : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
           }`}>
-            <div className="text-xs font-semibold text-gray-600 mb-1">DONE</div>
-            <div className={`text-2xl font-bold ${
-              item.readyQuantity > 0 ? 'text-green-600' : 'text-gray-400'
+            <div className="text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">DONE</div>
+            <div className={`text-lg sm:text-xl md:text-2xl font-bold ${
+              item.readyQuantity > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-600'
             }`}>
               {item.readyQuantity}
             </div>
-            <div className="text-xs text-gray-500 mt-1">DONE</div>
+            <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1">DONE</div>
           </div>
         </div>
       </CardContent>
@@ -771,49 +785,54 @@ function KOTCard({
   
   return (
     <Card className={`border-2 ${colors.border} ${colors.bg} hover:shadow-md transition-shadow`}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${colors.dot}`} />
+            <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${colors.dot}`} />
             <div>
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900">
                 KOT #{kot.kotNumber}
               </h3>
-              <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                <span>Table {kot.tableNumber || 'N/A'}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 mt-1">
+                <span>
+                  {kot.table 
+                    ? `${kot.table.tableName || `T${kot.table.tableNumber}`}${kot.table.section ? ` (${kot.table.section})` : ''}`
+                    : `Table ${kot.tableNumber || 'N/A'}`
+                  }
+                </span>
                 <span className="text-gray-400">•</span>
                 <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                  <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   {timeSince}
                 </span>
                 {isUrgent && statusColor === 'yellow' && (
                   <>
                     <span className="text-gray-400">•</span>
-                    <span className="text-red-600 font-semibold text-xs">URGENT</span>
+                    <span className="text-red-600 font-semibold text-[10px] sm:text-xs">URGENT</span>
                   </>
                 )}
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-500">Total Items</div>
-            <div className="text-2xl font-bold text-gray-900">{kot.items.length}</div>
+            <div className="text-[10px] sm:text-xs text-gray-500">Total Items</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{kot.items.length}</div>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-3">
-          <div className="space-y-2">
+        <div className="border-t border-gray-200 pt-2 sm:pt-3">
+          <div className="space-y-1.5 sm:space-y-2">
             {kot.items.map((item: any, index: number) => (
-              <div key={index} className="flex justify-between items-center bg-white px-3 py-2 rounded border border-gray-200">
-                <div>
-                  <span className="text-sm font-medium text-gray-900">{item.item.name}</span>
+              <div key={index} className="flex justify-between items-center bg-white px-2 sm:px-3 py-1.5 sm:py-2 rounded border border-gray-200">
+                <div className="flex-1 min-w-0 mr-2">
+                  <span className="text-xs sm:text-sm font-medium text-gray-900 truncate block">{item.item.name}</span>
                   {item.item.category && (
-                    <span className="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                    <span className="inline-block mt-0.5 text-[10px] sm:text-xs text-gray-500 bg-gray-100 px-1.5 sm:px-2 py-0.5 rounded">
                       {item.item.category.name}
                     </span>
                   )}
                 </div>
-                <span className={`text-base font-bold ${colors.text}`}>
+                <span className={`text-sm sm:text-base font-bold ${colors.text} whitespace-nowrap`}>
                   ×{item.quantity}
                 </span>
               </div>

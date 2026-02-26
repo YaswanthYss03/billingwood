@@ -305,6 +305,49 @@ export const api = {
     delete: (id: string) => apiClient.delete(`/recipes/${id}`),
   },
 
+  // Table Management (Restaurant/Cafe/Hotel)
+  tables: {
+    list: (params?: { locationId?: string; status?: string }) =>
+      apiClient.get('/tables', { params }),
+    get: (id: string) => apiClient.get(`/tables/${id}`),
+    getStats: (locationId: string) =>
+      apiClient.get('/tables/stats', { params: { locationId } }),
+    getAvailable: (locationId?: string, capacity?: number) =>
+      apiClient.get('/tables/available', { params: { locationId, capacity } }),
+    create: (data: any) => apiClient.post('/tables', data),
+    update: (id: string, data: any) => apiClient.patch(`/tables/${id}`, data),
+    delete: (id: string) => apiClient.delete(`/tables/${id}`),
+    updateStatus: (id: string, status: string, kotId?: string) =>
+      apiClient.patch(`/tables/${id}/status`, { status, kotId }),
+    occupy: (id: string, kotId: string) =>
+      apiClient.post(`/tables/${id}/occupy`, { kotId }),
+    free: (id: string) => apiClient.post(`/tables/${id}/free`),
+    move: (id: string, data: { section?: string; floor?: string; layoutZone?: string; positionX?: number; positionY?: number; rotation?: number; width?: number; height?: number; shape?: string }) =>
+      apiClient.patch(`/tables/${id}/move`, data),
+    bulkUpdatePositions: (updates: Array<{ id: string; positionX: number; positionY: number; rotation?: number }>) =>
+      apiClient.patch('/tables/bulk-position', { updates }),
+    
+    // Reservations
+    createReservation: (data: any) => apiClient.post('/tables/reservations', data),
+    listReservations: (params?: { locationId?: string; status?: string; date?: string; tableId?: string; customerPhone?: string }) =>
+      apiClient.get('/tables/reservations', { params }),
+    getReservation: (id: string) => apiClient.get(`/tables/reservations/${id}`),
+    getTodayReservations: (locationId?: string) =>
+      apiClient.get('/tables/reservations/today', { params: { locationId } }),
+    getUpcomingReservations: (locationId?: string, days?: number) =>
+      apiClient.get('/tables/reservations/upcoming', { params: { locationId, days } }),
+    updateReservation: (id: string, data: any) =>
+      apiClient.patch(`/tables/reservations/${id}`, data),
+    confirmReservation: (id: string) =>
+      apiClient.patch(`/tables/reservations/${id}/confirm`),
+    cancelReservation: (id: string, reason?: string) =>
+      apiClient.patch(`/tables/reservations/${id}/cancel`, { reason }),
+    markAsSeated: (id: string) =>
+      apiClient.patch(`/tables/reservations/${id}/seated`),
+    deleteReservation: (id: string) =>
+      apiClient.delete(`/tables/reservations/${id}`),
+  },
+
   // Admin (SUPER_ADMIN only)
   admin: {
     getTenants: () => apiClient.get('/admin/tenants'),

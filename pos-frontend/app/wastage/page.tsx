@@ -67,6 +67,7 @@ function WastageContent() {
   const accessCheck = canAccessWastageTracking();
 
   useEffect(() => {
+    // Wait for auth to complete before loading data
     if (accessCheck.canAccess) {
       loadData();
     } else {

@@ -33,6 +33,11 @@ export class CreateKotDto {
   @IsString()
   tableNumber?: string;
 
+  @ApiPropertyOptional({ example: 'ckl5j4g0w0000qzrmn0zqjzqz' })
+  @IsOptional()
+  @IsString()
+  tableId?: string;
+
   @ApiPropertyOptional({ example: 'Priority order' })
   @IsOptional()
   @IsString()

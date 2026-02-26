@@ -69,6 +69,7 @@ export class KotService {
           locationId: user?.locationId,
           kotNumber,
           tableNumber: createKotDto.tableNumber,
+          tableId: createKotDto.tableId,
           notes: createKotDto.notes,
           status: 'PENDING',
         },
@@ -96,6 +97,16 @@ export class KotService {
           user: {
             select: {
               name: true,
+            },
+          },
+          table: {
+            select: {
+              id: true,
+              tableNumber: true,
+              tableName: true,
+              capacity: true,
+              section: true,
+              status: true,
             },
           },
         },
@@ -152,6 +163,16 @@ export class KotService {
             name: true,
           },
         },
+        table: {
+          select: {
+            id: true,
+            tableNumber: true,
+            tableName: true,
+            capacity: true,
+            section: true,
+            status: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -177,6 +198,16 @@ export class KotService {
           select: {
             name: true,
             role: true,
+          },
+        },
+        table: {
+          select: {
+            id: true,
+            tableNumber: true,
+            tableName: true,
+            capacity: true,
+            section: true,
+            status: true,
           },
         },
         bills: true,

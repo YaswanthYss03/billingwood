@@ -206,8 +206,8 @@ export default function ItemsPage() {
         <DashboardLayout>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <div className="h-9 w-32 bg-gray-200 animate-pulse rounded" />
-              <div className="h-10 w-28 bg-gray-200 animate-pulse rounded" />
+              <div className="h-9 w-32 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
+              <div className="h-10 w-28 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
             </div>
             <TableSkeleton rows={8} />
           </div>
@@ -220,27 +220,27 @@ export default function ItemsPage() {
     <ProtectedRoute>
       <DashboardLayout>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Items</h1>
-              <p className="text-gray-600 mt-1">Manage your menu items and inventory</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Items</h1>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">Manage your menu items and inventory</p>
             </div>
-            <Button onClick={() => { resetForm(); setShowForm(!showForm); }}>
+            <Button onClick={() => { resetForm(); setShowForm(!showForm); }} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" /> Add Item
             </Button>
           </div>
 
           {showForm && (
-            <Card className="border-blue-200 shadow-md">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
+            <Card className="border-blue-200 dark:border-blue-700 shadow-md">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-800 border-b border-blue-100 dark:border-blue-700">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center text-blue-900">
+                  <CardTitle className="flex items-center text-blue-900 dark:text-blue-300">
                     <Package className="h-5 w-5 mr-2" />
                     {editingItem ? 'Edit Item' : 'Add New Item'}
                   </CardTitle>
                   <button
                     onClick={resetForm}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -249,7 +249,7 @@ export default function ItemsPage() {
               <CardContent className="pt-6">
                 <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Name *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Name *</label>
                     <Input
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -257,11 +257,11 @@ export default function ItemsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Category *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Category *</label>
                     <select
                       value={formData.categoryId}
                       onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                       required
                     >
                       <option value="">Select Category</option>
@@ -273,7 +273,7 @@ export default function ItemsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Price *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Price *</label>
                     <Input
                       type="number"
                       step="0.01"
@@ -283,11 +283,11 @@ export default function ItemsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">GST Rate (%) *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">GST Rate (%) *</label>
                     <select
                       value={formData.gstRate}
                       onChange={(e) => setFormData({ ...formData, gstRate: e.target.value })}
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                       required
                     >
                       {gstRates.map((rate, index) => (
@@ -296,16 +296,16 @@ export default function ItemsPage() {
                         </option>
                       ))}
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Configure GST rates in Settings
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Unit *</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Unit *</label>
                     <select
                       value={formData.unit}
                       onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                      className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                      className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                       required
                     >
                       <option value="PCS">Pieces (PCS)</option>
@@ -316,7 +316,7 @@ export default function ItemsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">SKU</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">SKU</label>
                     <Input
                       value={formData.sku}
                       onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
@@ -324,11 +324,11 @@ export default function ItemsPage() {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Description</label>
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Description</label>
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                      className="flex min-h-[80px] w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                       placeholder="Optional"
                     />
                   </div>
@@ -340,21 +340,21 @@ export default function ItemsPage() {
                       className="mr-2 h-4 w-4"
                       id="trackInventory"
                     />
-                    <label htmlFor="trackInventory" className="text-sm font-medium text-gray-900">Track Inventory</label>
+                    <label htmlFor="trackInventory" className="text-sm font-medium text-gray-900 dark:text-gray-100">Track Inventory</label>
                   </div>
                   {formData.trackInventory && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">Inventory Mode</label>
+                      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">Inventory Mode</label>
                       <select
                         value={formData.inventoryMode}
                         onChange={(e) => setFormData({ ...formData, inventoryMode: e.target.value })}
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                        className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                       >
                         <option value="AUTO">Auto-deduct (Default)</option>
                         <option value="MANUAL">Manual (Chef manages availability)</option>
                         <option value="DISABLED">Disabled (Unlimited quantity)</option>
                       </select>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {formData.inventoryMode === 'AUTO' && 'Stock automatically deducted on each sale'}
                         {formData.inventoryMode === 'MANUAL' && 'For cooked items - bill freely, update stock manually'}
                         {formData.inventoryMode === 'DISABLED' && 'No stock validation - suitable for unlimited items'}
@@ -373,8 +373,8 @@ export default function ItemsPage() {
           )}
 
           <Card className="shadow-md">
-            <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b">
-              <CardTitle className="flex items-center text-gray-900">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 border-b dark:border-gray-700">
+              <CardTitle className="flex items-center text-gray-900 dark:text-gray-100">
                 <Package className="h-5 w-5 mr-2 text-blue-600" />
                 All Items ({items.length})
               </CardTitle>
@@ -382,9 +382,9 @@ export default function ItemsPage() {
             <CardContent className="p-0">
               {items.length === 0 ? (
                 <div className="text-center py-12">
-                  <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600 text-lg mb-2">No items yet</p>
-                  <p className="text-gray-500 text-sm mb-6">Get started by adding your first menu item</p>
+                  <Package className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 text-lg mb-2">No items yet</p>
+                  <p className="text-gray-500 dark:text-gray-500 text-sm mb-6">Get started by adding your first menu item</p>
                   <Button onClick={() => { resetForm(); setShowForm(true); }}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Your First Item
@@ -394,7 +394,7 @@ export default function ItemsPage() {
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50">
+                      <TableRow className="bg-gray-50 dark:bg-gray-700">
                         <TableHead className="font-semibold">Item Details</TableHead>
                         <TableHead className="font-semibold">Category</TableHead>
                         <TableHead className="font-semibold">Pricing</TableHead>
@@ -406,12 +406,12 @@ export default function ItemsPage() {
                     </TableHeader>
                     <TableBody>
                       {items.map((item) => (
-                        <TableRow key={item.id} className="hover:bg-gray-50 transition-colors">
+                        <TableRow key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                           <TableCell>
                             <div>
-                              <div className="font-medium text-gray-900 text-base">{item.name}</div>
+                              <div className="font-medium text-gray-900 dark:text-gray-100 text-base">{item.name}</div>
                               {item.sku && (
-                                <div className="text-xs text-gray-500 mt-1 flex items-center">
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center">
                                   <Tag className="h-3 w-3 mr-1" />
                                   SKU: {item.sku}
                                 </div>
@@ -419,28 +419,28 @@ export default function ItemsPage() {
                             </div>
                           </TableCell>
                           <TableCell>
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-800">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
                               {item.category.name}
                             </span>
                           </TableCell>
                           <TableCell>
                             <div className="space-y-1">
-                              <div className="text-gray-900 font-semibold text-base">
+                              <div className="text-gray-900 dark:text-gray-100 font-semibold text-base">
                                 {formatCurrency(item.price)}
                               </div>
-                              <div className="text-xs text-gray-600">
+                              <div className="text-xs text-gray-600 dark:text-gray-400">
                                 GST: {item.gstRate}%
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
                             {item.trackInventory ? (
-                              <div className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800">
+                              <div className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
                                 <Package className="h-3 w-3 mr-1" />
                                 Tracked
                               </div>
                             ) : (
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-600">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
                                 Not Tracked
                               </span>
                             )}
@@ -448,13 +448,13 @@ export default function ItemsPage() {
                           <TableCell>
                             {item.trackInventory ? (
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-base text-gray-900">
+                                <span className="font-semibold text-base text-gray-900 dark:text-gray-100">
                                   {itemQuantities[item.id] !== undefined ? itemQuantities[item.id] : '0'}
                                 </span>
-                                <span className="text-sm text-gray-500">{item.unit}</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">{item.unit}</span>
                               </div>
                             ) : (
-                              <span className="text-gray-400 text-sm">N/A</span>
+                              <span className="text-gray-400 dark:text-gray-500 text-sm">N/A</span>
                             )}
                           </TableCell>
                           <TableCell>
@@ -462,12 +462,12 @@ export default function ItemsPage() {
                               onClick={() => handleToggleStatus(item)}
                               className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold transition-all transform hover:scale-105 cursor-pointer shadow-sm ${
                                 item.isActive
-                                  ? 'bg-green-500 text-white hover:bg-green-600'
-                                  : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                                  ? 'bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700'
+                                  : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-500'
                               }`}
                               title={`Click to ${item.isActive ? 'deactivate' : 'activate'}`}
                             >
-                              <span className={`h-2 w-2 rounded-full mr-2 ${item.isActive ? 'bg-white' : 'bg-gray-600'}`}></span>
+                              <span className={`h-2 w-2 rounded-full mr-2 ${item.isActive ? 'bg-white' : 'bg-gray-600 dark:bg-gray-300'}`}></span>
                               {item.isActive ? 'Active' : 'Inactive'}
                             </button>
                           </TableCell>
@@ -476,7 +476,7 @@ export default function ItemsPage() {
                               {item.trackInventory && (
                                 <button
                                   onClick={() => handleOpenStockModal(item)}
-                                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                  className="p-2 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors"
                                   title="Add stock"
                                 >
                                   <Plus className="h-4 w-4" />
@@ -484,14 +484,14 @@ export default function ItemsPage() {
                               )}
                               <button
                                 onClick={() => handleEdit(item)}
-                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                                 title="Edit item"
                               >
                                 <Edit className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(item.id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                 title="Delete item"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -509,17 +509,17 @@ export default function ItemsPage() {
 
           {/* Info Box */}
           {items.length > 0 && (
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30">
               <CardContent className="pt-6">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-800">
                       <Package className="h-5 w-5 text-blue-600" />
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h4 className="font-semibold text-blue-900 mb-2">💡 Quick Tips</h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">💡 Quick Tips</h4>
+                    <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                       <li>• Click on the <span className="font-semibold">Status badge</span> to quickly activate/deactivate items</li>
                       <li>• Inactive items won't appear in POS or order screens</li>
                       <li>• Track inventory for items with limited stock</li>
@@ -532,34 +532,34 @@ export default function ItemsPage() {
           )}
         </div>
 
-        {/* Stock Update Modal */}
+        {/* Stock UpdateModal */}
         {showStockModal && stockItem && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-md shadow-2xl">
+            <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md shadow-2xl">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">Add Stock</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Add Stock</h2>
                   <button
                     onClick={() => setShowStockModal(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                   >
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Item</p>
-                    <p className="text-lg font-semibold text-gray-900">{stockItem.name}</p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Current Stock: <span className="font-semibold text-gray-900">
+                  <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Item</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{stockItem.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Current Stock: <span className="font-semibold text-gray-900 dark:text-gray-100">
                         {itemQuantities[stockItem.id] || 0} {stockItem.unit}
                       </span>
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                       Quantity to Add *
                     </label>
                     <Input
@@ -575,9 +575,9 @@ export default function ItemsPage() {
                   </div>
 
                   {stockQuantity && parseFloat(stockQuantity) > 0 && (
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <p className="text-sm text-gray-600">New Total</p>
-                      <p className="text-2xl font-bold text-green-700">
+                    <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">New Total</p>
+                      <p className="text-2xl font-bold text-green-700 dark:text-green-300">
                         {(itemQuantities[stockItem.id] || 0) + parseFloat(stockQuantity)} {stockItem.unit}
                       </p>
                     </div>

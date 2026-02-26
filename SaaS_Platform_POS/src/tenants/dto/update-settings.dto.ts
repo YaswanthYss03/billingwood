@@ -35,6 +35,11 @@ export class UpdateSettingsDto {
   @IsBoolean()
   enableThermalPrinter?: boolean;
 
+  @ApiProperty({ description: 'Enable dark mode theme', required: false })
+  @IsOptional()
+  @IsBoolean()
+  darkMode?: boolean;
+
   @ApiProperty({ 
     description: 'Custom GST/Tax rates for the business',
     required: false,

@@ -123,25 +123,25 @@ function RecipesContent() {
         <div className="max-w-md text-center">
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-8">
             <Lock className="w-16 h-16 mx-auto mb-4 text-purple-600" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Recipe Management</h2>
-            <p className="text-gray-600 mb-4">{accessCheck.reason}</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Recipe Management</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">{accessCheck.reason}</p>
             
             {isBusinessTypeIssue ? (
               <div className="bg-white rounded-lg p-4 mb-4">
-                <h3 className="font-semibold text-gray-900 mb-2">Restaurant Feature</h3>
-                <p className="text-sm text-gray-600 mb-3">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Restaurant Feature</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Recipe/BOM Management is designed for F&B businesses (Restaurant, Hotel, Cafe).
                   Your current business type is: <span className="font-semibold">{businessType}</span>
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   This feature enables automatic ingredient deduction when selling composite items.
                   Contact support to update your business type if needed.
                 </p>
               </div>
             ) : (
               <div className="bg-white rounded-lg p-4 mb-4">
-                <h3 className="font-semibold text-gray-900 mb-2">Unlock Professional Features:</h3>
-                <ul className="text-sm text-left text-gray-600 space-y-1">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Unlock Professional Features:</h3>
+                <ul className="text-sm text-left text-gray-600 dark:text-gray-400 space-y-1">
                   <li>✓ Bill of Materials (BOM) for composite items</li>
                   <li>✓ Auto-deduct ingredients during billing</li>
                   <li>✓ Real-time recipe costing</li>
@@ -176,7 +176,7 @@ function RecipesContent() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading recipes...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading recipes...</p>
         </div>
       </div>
     );
@@ -187,8 +187,8 @@ function RecipesContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Recipe Management</h1>
-          <p className="text-gray-600 mt-1">Manage Bills of Materials for composite items</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Recipe Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage Bills of Materials for composite items</p>
         </div>
         <Link
           href="/recipes/new"
@@ -203,11 +203,11 @@ function RecipesContent() {
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Total Recipes</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">Total Recipes</span>
             <ChefHat className="w-5 h-5 text-purple-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{recipes.length}</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{recipes.length}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {recipes.filter(r => r.isActive).length} active
           </div>
         </div>
@@ -228,35 +228,35 @@ function RecipesContent() {
             <span className="text-sm text-gray-600">Total Ingredients</span>
             <TrendingUp className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {recipes.reduce((sum, r) => sum + r.ingredients.length, 0)}
           </div>
-          <div className="text-xs text-gray-500 mt-1">Used across all recipes</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Used across all recipes</div>
         </div>
       </div>
 
       {/* Search */}
-      <div className="bg-white p-4 rounded-lg shadow border">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border dark:border-gray-700">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
           <input
             type="text"
             placeholder="Search recipes by name, description, or finished item..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500"
           />
         </div>
       </div>
 
       {/* Recipes List */}
       {filteredRecipes.length === 0 ? (
-        <div className="bg-white rounded-lg shadow border p-12 text-center">
-          <ChefHat className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border dark:border-gray-700 p-12 text-center">
+          <ChefHat className="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-600" />
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {searchTerm ? 'No recipes found' : 'No recipes yet'}
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             {searchTerm
               ? 'Try adjusting your search criteria'
               : 'Create your first recipe to enable automatic ingredient deduction during billing'}
@@ -276,17 +276,17 @@ function RecipesContent() {
           {filteredRecipes.map((recipe) => (
             <div
               key={recipe.id}
-              className="bg-white rounded-lg shadow border hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow border dark:border-gray-700 hover:shadow-lg transition-shadow"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{recipe.name}</h3>
-                    <div className="text-sm text-gray-600">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{recipe.name}</h3>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
                       {recipe.finishedGood?.name || 'Finished Good'}
                     </div>
                     {recipe.description && (
-                      <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">
                         {recipe.description}
                       </p>
                     )}
@@ -294,8 +294,8 @@ function RecipesContent() {
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                       recipe.isActive
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                     }`}
                   >
                     {recipe.isActive ? 'Active' : 'Inactive'}
@@ -304,46 +304,46 @@ function RecipesContent() {
 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Yield:</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="text-gray-600 dark:text-gray-400">Yield:</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
                       {recipe.yieldQuantity} {recipe.yieldUnit}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Ingredients:</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="text-gray-600 dark:text-gray-400">Ingredients:</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
                       {recipe.ingredients.length} items
                     </span>
                   </div>
                   {recipe.preparationTime && (
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Prep Time:</span>
-                      <span className="font-medium text-gray-900">
+                      <span className="text-gray-600 dark:text-gray-400">Prep Time:</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
                         {recipe.preparationTime} mins
                       </span>
                     </div>
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                   {recipeCosts[recipe.id] ? (
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-3 rounded-lg mb-3">
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-3 rounded-lg mb-3">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-gray-600">Total Cost</span>
-                        <span className="text-lg font-bold text-purple-700">
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Total Cost</span>
+                        <span className="text-lg font-bold text-purple-700 dark:text-purple-400">
                           ₹{recipeCosts[recipe.id].totalCost.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">Cost per {recipe.yieldUnit}</span>
-                        <span className="text-sm font-semibold text-gray-700">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Cost per {recipe.yieldUnit}</span>
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                           ₹{recipeCosts[recipe.id].costPerUnit.toFixed(2)}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-gray-50 p-3 rounded-lg mb-3 text-center">
-                      <span className="text-xs text-gray-500">Loading cost...</span>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-3 text-center">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Loading cost...</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
@@ -356,7 +356,7 @@ function RecipesContent() {
                     </Link>
                     <button
                       onClick={() => handleDelete(recipe.id, recipe.name)}
-                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -370,12 +370,12 @@ function RecipesContent() {
       )}
 
       {/* Professional Badge + Restaurant Feature */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
         <div className="flex items-center gap-3">
-          <ChefHat className="w-6 h-6 text-purple-600" />
+          <ChefHat className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <div>
-            <h3 className="font-semibold text-gray-900">Professional Feature - Restaurant Only</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Professional Feature - Restaurant Only</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Recipe Management automatically deducts ingredients from inventory when you sell composite items, ensuring accurate stock tracking
             </p>
           </div>

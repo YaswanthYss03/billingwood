@@ -107,11 +107,11 @@ function VendorsContent() {
         <div className="max-w-md text-center">
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg p-8">
             <Lock className="w-16 h-16 mx-auto mb-4 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Vendor Management</h2>
-            <p className="text-gray-600 mb-4">{accessCheck.reason}</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Vendor Management</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">{accessCheck.reason}</p>
             <div className="bg-white rounded-lg p-4 mb-4">
-              <h3 className="font-semibold text-gray-900 mb-2">Unlock Professional Features:</h3>
-              <ul className="text-sm text-left text-gray-600 space-y-1">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Unlock Professional Features:</h3>
+              <ul className="text-sm text-left text-gray-600 dark:text-gray-400 space-y-1">
                 <li>✓ Centralized vendor database</li>
                 <li>✓ Track vendor performance and history</li>
                 <li>✓ Link vendors to purchase orders</li>
@@ -143,7 +143,7 @@ function VendorsContent() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading vendors...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading vendors...</p>
         </div>
       </div>
     );
@@ -154,8 +154,8 @@ function VendorsContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Vendor Management</h1>
-          <p className="text-gray-600 mt-1">Manage your suppliers and vendors</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Vendor Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your suppliers and vendors</p>
         </div>
         <Link
           href="/vendors/new"
@@ -170,11 +170,11 @@ function VendorsContent() {
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600">Total Vendors</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">Total Vendors</span>
             <Building2 className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{vendors.length}</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{vendors.length}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {vendors.filter(v => v.isActive).length} active
           </div>
         </div>
@@ -231,7 +231,7 @@ function VendorsContent() {
       {filteredVendors.length === 0 ? (
         <div className="bg-white rounded-lg shadow border p-12 text-center">
           <Building2 className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {searchTerm ? 'No vendors found' : 'No vendors yet'}
           </h3>
           <p className="text-gray-600 mb-4">
@@ -253,7 +253,7 @@ function VendorsContent() {
         <div className="bg-white rounded-lg shadow border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Vendor Details

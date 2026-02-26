@@ -53,7 +53,10 @@ export default function InventoryPage() {
   const isStarterPlan = subscription?.currentPlan === 'STARTER' || subscription?.currentPlan === 'FREE_TRIAL';
 
   useEffect(() => {
-    if (user?.role === 'OWNER') {
+    // Only load data when user is authenticated
+    if (!user) return;
+    
+    if (user.role === 'OWNER') {
       loadLocations();
     }
     loadInventory();
@@ -63,9 +66,10 @@ export default function InventoryPage() {
     if (!isStarterPlan) {
       loadItems();
     }
-  }, [user]);
+  }, [user, isStarterPlan]);
 
   useEffect(() => {
+    // Only reload inventory when user exists and location changes
     if (user) {
       loadInventory();
     }
@@ -291,9 +295,9 @@ export default function InventoryPage() {
     <ProtectedRoute>
       <DashboardLayout>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Inventory</h1>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Inventory</h1>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
               {/* Location Filter for Owners */}
               {user?.role === 'OWNER' && locations.length > 0 && (
                 <div className="flex items-center gap-2">

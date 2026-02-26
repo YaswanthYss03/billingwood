@@ -335,19 +335,20 @@ export default function ReportsPage() {
     <ProtectedRoute>
       <DashboardLayout>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-            <div className="flex gap-2">
-              <Button onClick={loadReport} variant="outline">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button onClick={loadReport} variant="outline" className="w-full sm:w-auto">
                 <Download className="mr-2 h-4 w-4" /> Refresh
               </Button>
               <Button 
                 onClick={downloadAllReportsPDF} 
                 disabled={downloading}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
               >
                 <FileText className="mr-2 h-4 w-4" />
-                {downloading ? 'Generating PDF...' : 'Download Complete Report (PDF)'}
+                <span className="hidden sm:inline">{downloading ? 'Generating PDF...' : 'Download Complete Report (PDF)'}</span>
+                <span className="sm:hidden">{downloading ? 'Generating...' : 'Download PDF'}</span>
               </Button>
             </div>
           </div>

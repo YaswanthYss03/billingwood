@@ -126,7 +126,7 @@ export default function IngredientsPage() {
       <ProtectedRoute>
         <DashboardLayout>
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">Ingredients</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Ingredients</h1>
             <TableSkeleton />
           </div>
         </DashboardLayout>
@@ -139,7 +139,7 @@ export default function IngredientsPage() {
       <DashboardLayout>
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Ingredients</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Ingredients</h1>
             <Button onClick={() => { resetForm(); setShowForm(true); }}>
               <Plus className="h-4 w-4 mr-2" />
               Add Ingredient
@@ -149,15 +149,15 @@ export default function IngredientsPage() {
           {/* Form Modal */}
           {showForm && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-xl w-full max-w-md shadow-2xl">
+              <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-md shadow-2xl">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                       {editingIngredient ? 'Edit Ingredient' : 'New Ingredient'}
                     </h2>
                     <button
                       onClick={resetForm}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
                     >
                       <X className="h-6 w-6" />
                     </button>
@@ -165,7 +165,7 @@ export default function IngredientsPage() {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                         Name *
                       </label>
                       <Input
@@ -178,13 +178,13 @@ export default function IngredientsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                         Unit *
                       </label>
                       <select
                         value={formData.unit}
                         onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+                        className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
                         required
                       >
                         {UNIT_OPTIONS.map((option) => (
@@ -217,9 +217,9 @@ export default function IngredientsPage() {
             <CardContent>
               {ingredients.length === 0 ? (
                 <div className="text-center py-16">
-                  <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Ingredients Yet</h3>
-                  <p className="text-gray-500 text-sm mb-6">Get started by adding your first ingredient</p>
+                  <Package className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Ingredients Yet</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Get started by adding your first ingredient</p>
                   <Button onClick={() => { resetForm(); setShowForm(true); }}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Your First Ingredient
@@ -229,7 +229,7 @@ export default function IngredientsPage() {
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50">
+                      <TableRow className="bg-gray-50 dark:bg-gray-700">
                         <TableHead className="font-semibold">Name</TableHead>
                         <TableHead className="font-semibold">Unit</TableHead>
                         <TableHead className="font-semibold">Used In</TableHead>
@@ -248,12 +248,12 @@ export default function IngredientsPage() {
                           ) || [];
 
                         return (
-                          <TableRow key={ingredient.id} className="hover:bg-gray-50 transition-colors">
+                          <TableRow key={ingredient.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                             <TableCell>
-                              <div className="font-medium text-gray-900 text-base">{ingredient.name}</div>
+                              <div className="font-medium text-gray-900 dark:text-gray-100 text-base">{ingredient.name}</div>
                             </TableCell>
                             <TableCell>
-                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-800">
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
                                 {ingredient.unit}
                               </span>
                             </TableCell>
@@ -263,14 +263,14 @@ export default function IngredientsPage() {
                                   {usedInItems.map((item: any) => (
                                     <span
                                       key={item.id}
-                                      className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                                      className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
                                     >
                                       {item.name}
                                     </span>
                                   ))}
                                 </div>
                               ) : (
-                                <span className="text-sm text-gray-400 italic">Not used in any recipe</span>
+                                <span className="text-sm text-gray-400 dark:text-gray-500 italic">Not used in any recipe</span>
                               )}
                             </TableCell>
                             <TableCell>
@@ -278,12 +278,12 @@ export default function IngredientsPage() {
                                 onClick={() => handleToggleStatus(ingredient)}
                                 className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold transition-all transform hover:scale-105 cursor-pointer shadow-sm ${
                                   ingredient.isActive
-                                    ? 'bg-green-500 text-white hover:bg-green-600'
-                                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                                    ? 'bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700'
+                                    : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-500'
                                 }`}
                                 title={`Click to ${ingredient.isActive ? 'deactivate' : 'activate'}`}
                               >
-                                <span className={`h-2 w-2 rounded-full mr-2 ${ingredient.isActive ? 'bg-white' : 'bg-gray-600'}`}></span>
+                                <span className={`h-2 w-2 rounded-full mr-2 ${ingredient.isActive ? 'bg-white' : 'bg-gray-600 dark:bg-gray-300'}`}></span>
                                 {ingredient.isActive ? 'Active' : 'Inactive'}
                               </button>
                             </TableCell>

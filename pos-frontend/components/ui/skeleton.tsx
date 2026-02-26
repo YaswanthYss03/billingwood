@@ -5,7 +5,7 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-gray-200", className)}
+      className={cn("animate-pulse rounded-md bg-gray-200 dark:bg-gray-700", className)}
       {...props}
     />
   );
@@ -13,7 +13,7 @@ export function Skeleton({ className, ...props }: SkeletonProps) {
 
 export function CardSkeleton() {
   return (
-    <div className="rounded-lg border bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
       <Skeleton className="h-4 w-24 mb-4" />
       <Skeleton className="h-8 w-32" />
     </div>
@@ -22,8 +22,8 @@ export function CardSkeleton() {
 
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="rounded-lg border bg-white overflow-hidden">
-      <div className="border-b bg-gray-50 p-4">
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+      <div className="border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700 p-4">
         <div className="flex gap-4">
           <Skeleton className="h-4 w-32" />
           <Skeleton className="h-4 w-24" />
@@ -32,7 +32,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         </div>
       </div>
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="border-b p-4 last:border-0">
+        <div key={i} className="border-b dark:border-gray-700 p-4 last:border-0">
           <div className="flex gap-4">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-4 w-24" />
@@ -56,7 +56,7 @@ export function DashboardSkeleton() {
       </div>
       <div className="grid lg:grid-cols-2 gap-6">
         {Array.from({ length: 2 }).map((_, i) => (
-          <div key={i} className="rounded-lg border bg-white p-6 shadow-sm">
+          <div key={i} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
             <Skeleton className="h-6 w-40 mb-4" />
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, j) => (
@@ -101,7 +101,7 @@ export function FormSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-9 w-48" />
-      <div className="rounded-lg border bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm space-y-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="space-y-2">
             <Skeleton className="h-4 w-24" />

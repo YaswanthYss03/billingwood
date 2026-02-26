@@ -15,6 +15,7 @@ import { ReportsModule } from './reports/reports.module';
 import { AuditModule } from './audit/audit.module';
 import { CommonModule } from './common/common.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
+import { TablesModule } from './tables/tables.module';
 // Professional Plan Features
 import { LocationsModule } from './locations/locations.module';
 import { CustomersModule } from './customers/customers.module';
@@ -49,6 +50,7 @@ import { AdminModule } from './admin/admin.module';
     PurchasesModule,
     BillingModule,
     KotModule,
+    TablesModule,
     PrintingModule,
     ReportsModule,
     AuditModule,

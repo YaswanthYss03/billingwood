@@ -142,8 +142,8 @@ export default function CategoriesPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-              <p className="text-gray-600 mt-1">Organize your items into categories</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Categories</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Organize your items into categories</p>
             </div>
             {!showForm && (
               <Button onClick={() => setShowForm(true)}>
@@ -163,7 +163,7 @@ export default function CategoriesPage() {
                   </CardTitle>
                   <button
                     onClick={resetForm}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -173,7 +173,7 @@ export default function CategoriesPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                         Category Name *
                       </label>
                       <Input
@@ -185,7 +185,7 @@ export default function CategoriesPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">
+                      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                         Description
                       </label>
                       <Input
@@ -221,8 +221,8 @@ export default function CategoriesPage() {
             <CardContent>
               {categories.length === 0 ? (
                 <div className="text-center py-12">
-                  <FolderOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">No categories yet</p>
+                  <FolderOpen className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">No categories yet</p>
                   <Button onClick={() => setShowForm(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Your First Category
