@@ -1,5 +1,3 @@
- Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
- [HMR] connected
  Request interceptor - Making request to: /auth/me Method: get
  Request interceptor - ResponseType: undefined
  Request interceptor - Full config: {
@@ -30,47 +28,11 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "get",
   "url": "/auth/me",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Making request to: /auth/me Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "get",
-  "url": "/auth/me",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Token added
  Request interceptor - Token added
  Response interceptor - Received response from: /auth/me
  Response interceptor - Status: 200
@@ -79,154 +41,6 @@
  Response interceptor - Data constructor: Object
  Response interceptor - Response type config: undefined
  Response interceptor - Unwrapping data property
- [Frontend] fetchBankAccounts called
- [Frontend] fetchTransportAgents called
- [Frontend] fetchBankAccounts called
- [Frontend] fetchTransportAgents called
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
  Request interceptor - Making request to: /tenants/subscription/info Method: get
  Request interceptor - ResponseType: undefined
  Request interceptor - Full config: {
@@ -257,7 +71,7 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "get",
   "url": "/tenants/subscription/info",
   "allowAbsoluteUrls": true
@@ -292,7 +106,7 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "get",
   "url": "/tenants/settings",
   "allowAbsoluteUrls": true
@@ -327,283 +141,14 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "get",
-  "url": "/tenants/settings",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /locations Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {},
-  "method": "get",
-  "url": "/locations",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /tenants/subscription/info Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "get",
-  "url": "/tenants/subscription/info",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Request interceptor - Token added
- Response interceptor - Received response from: /auth/me
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Request interceptor - Making request to: /tenants/settings Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "get",
-  "url": "/tenants/settings",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Making request to: /tenants/settings Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "get",
   "url": "/tenants/settings",
   "allowAbsoluteUrls": true
 }
  Request interceptor - Token added
  Request interceptor - Token added
- [Fast Refresh] rebuilding
- [Fast Refresh] done in 1551ms
+ Request interceptor - Token added
  Response interceptor - Received response from: /tenants/settings
  Response interceptor - Status: 200
  Response interceptor - Data type: object
@@ -618,6 +163,43 @@
  Response interceptor - Data constructor: Object
  Response interceptor - Response type config: undefined
  Response interceptor - Returning response as-is
+ Request interceptor - Making request to: /reports/dashboard Method: get
+ Request interceptor - ResponseType: undefined
+ Request interceptor - Full config: {
+  "transitional": {
+    "silentJSONParsing": true,
+    "forcedJSONParsing": true,
+    "clarifyTimeoutError": false,
+    "legacyInterceptorReqResOrdering": true
+  },
+  "adapter": [
+    "xhr",
+    "http",
+    "fetch"
+  ],
+  "transformRequest": [
+    null
+  ],
+  "transformResponse": [
+    null
+  ],
+  "timeout": 0,
+  "xsrfCookieName": "XSRF-TOKEN",
+  "xsrfHeaderName": "X-XSRF-TOKEN",
+  "maxContentLength": -1,
+  "maxBodyLength": -1,
+  "env": {},
+  "headers": {
+    "Accept": "application/json, text/plain, */*",
+    "Content-Type": "application/json"
+  },
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "params": {},
+  "method": "get",
+  "url": "/reports/dashboard",
+  "allowAbsoluteUrls": true
+}
+ Request interceptor - Token added
  Response interceptor - Received response from: /tenants/settings
  Response interceptor - Status: 200
  Response interceptor - Data type: object
@@ -655,7 +237,7 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "patch",
   "url": "/tenants/settings",
   "data": {
@@ -668,30 +250,16 @@
   "allowAbsoluteUrls": true
 }
  Request interceptor - Token added
- Response interceptor - Received response from: /tenants/subscription/info
+ Response interceptor - Received response from: /reports/dashboard
  Response interceptor - Status: 200
  Response interceptor - Data type: object
  Response interceptor - Is Blob? false
  Response interceptor - Data constructor: Object
  Response interceptor - Response type config: undefined
  Response interceptor - Returning response as-is
- Response interceptor - Received response from: /tenants/settings
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Response interceptor - Received response from: /tenants/settings
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Request interceptor - Making request to: /tenants/settings Method: patch
+ Request interceptor - Making request to: /users Method: get
  Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -719,79 +287,14 @@
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "patch",
-  "url": "/tenants/settings",
-  "data": {
-    "kotEnabled": false,
-    "autoGenerateKOT": false,
-    "requireTableNumber": false,
-    "enableThermalPrinter": true,
-    "darkMode": false
-  },
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Token added
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- Request interceptor - Making request to: /invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "method": "get",
-  "url": "/invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4",
+  "url": "/users",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- Request interceptor - Making request to: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /locations Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: undefined
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -819,47 +322,15 @@ The resource <URL> was preloaded using link preload but not used within a few se
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "params": {},
   "method": "get",
-  "url": "/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4",
+  "url": "/locations",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
-:4000/api/v1/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
- Response interceptor - Error occurred: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Request failed with status code 403
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Error code: ERR_BAD_REQUEST
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Error details: Object
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Failed to fetch brandings: 
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Received response from: /tenants/settings
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Response interceptor - Received response from: /invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- [Frontend] Locations response: 1 locations
- [Frontend] Fetching bank accounts for location: fe7a8809-db2d-42b6-86d0-583114ecedf4
- Request interceptor - Making request to: /invoices/bank-accounts Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /items Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: undefined
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -887,34 +358,85 @@ error @ 7ef20_next_dist_6b5aa1c0._.js:3128
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "params": {},
+  "method": "get",
+  "url": "/items",
+  "allowAbsoluteUrls": true
+}
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /tenants/settings
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Object
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Unwrapping data property
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /items
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Array
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Returning response as-is
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /users
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Array
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Returning response as-is
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /locations
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Array
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Returning response as-is
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /invoices Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: undefined
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
+  "transitional": {
+    "silentJSONParsing": true,
+    "forcedJSONParsing": true,
+    "clarifyTimeoutError": false,
+    "legacyInterceptorReqResOrdering": true
+  },
+  "adapter": [
+    "xhr",
+    "http",
+    "fetch"
+  ],
+  "transformRequest": [
+    null
+  ],
+  "transformResponse": [
+    null
+  ],
+  "timeout": 0,
+  "xsrfCookieName": "XSRF-TOKEN",
+  "xsrfHeaderName": "X-XSRF-TOKEN",
+  "maxContentLength": -1,
+  "maxBodyLength": -1,
+  "env": {},
+  "headers": {
+    "Accept": "application/json, text/plain, */*",
+    "Content-Type": "application/json"
+  },
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
   "params": {
-    "locationId": "fe7a8809-db2d-42b6-86d0-583114ecedf4"
+    "page": 1,
+    "limit": 20
   },
   "method": "get",
-  "url": "/invoices/bank-accounts",
+  "url": "/invoices",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
- Response interceptor - Received response from: /tenants/settings
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Object
- Response interceptor - Response type config: undefined
- Response interceptor - Unwrapping data property
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- [Frontend] Locations response: 1 locations
- [Frontend] Fetching transport agents for location: fe7a8809-db2d-42b6-86d0-583114ecedf4
- Request interceptor - Making request to: /invoices/transport-agents Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /invoices/dashboard Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: undefined
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -942,33 +464,15 @@ error @ 7ef20_next_dist_6b5aa1c0._.js:3128
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {
-    "locationId": "fe7a8809-db2d-42b6-86d0-583114ecedf4"
-  },
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "params": {},
   "method": "get",
-  "url": "/invoices/transport-agents",
+  "url": "/invoices/dashboard",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
- Response interceptor - Received response from: /invoices/bank-accounts
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- [Frontend] Bank accounts response: 3 accounts
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- Request interceptor - Making request to: /invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /invoices/dashboard Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: undefined
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -996,22 +500,44 @@ error @ 7ef20_next_dist_6b5aa1c0._.js:3128
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "params": {},
   "method": "get",
-  "url": "/invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4",
+  "url": "/invoices/dashboard",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- Request interceptor - Making request to: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /invoices
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Object
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Paginated response, preserving structure
+35bd038aa9511784.js:1 Invoices API response: Object
+invoices/2b7fffc5-4bfb-4f67-a812-563f193a6519/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/c66e4e6e-2706-46f9-bccc-50a0421c4e30/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/a554f642-2ba4-47e2-98ab-45773c7dd96e/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /invoices/dashboard
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Object
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Unwrapping data property
+invoices/c982230e-03f4-4275-9b9f-c9fec14e3932/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/d3cda1c4-2e6b-4981-978c-a8ee1ffa76cc/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/c982230e-03f4-4275-9b9f-c9fec14e3932/edit?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/d3cda1c4-2e6b-4981-978c-a8ee1ffa76cc/edit?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/ceb5f5eb-bcb5-46c6-8ea9-147c6060846c/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/payment?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/edit?_rsc=1nzon:1  Failed to load resource: the server responded with a status of 404 ()
+35bd038aa9511784.js:1 InvoicePreviewModal - Fetching PDF for invoice: 7061d347-95d0-48d6-8cc4-1a518eaa5b94
+d36d63b6ec0cdec7.js:1 Request interceptor - Making request to: /invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/pdf Method: get
+d36d63b6ec0cdec7.js:1 Request interceptor - ResponseType: blob
+d36d63b6ec0cdec7.js:1 Request interceptor - Full config: {
   "transitional": {
     "silentJSONParsing": true,
     "forcedJSONParsing": true,
@@ -1029,7 +555,7 @@ error @ 7ef20_next_dist_6b5aa1c0._.js:3128
   "transformResponse": [
     null
   ],
-  "timeout": 0,
+  "timeout": 30000,
   "xsrfCookieName": "XSRF-TOKEN",
   "xsrfHeaderName": "X-XSRF-TOKEN",
   "maxContentLength": -1,
@@ -1039,217 +565,30 @@ error @ 7ef20_next_dist_6b5aa1c0._.js:3128
     "Accept": "application/json, text/plain, */*",
     "Content-Type": "application/json"
   },
-  "baseURL": "http://localhost:4000/api/v1",
+  "baseURL": "https://billingwoodserver.onrender.com/api/v1",
+  "responseType": "blob",
   "method": "get",
-  "url": "/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4",
+  "url": "/invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/pdf",
   "allowAbsoluteUrls": true
 }
- Request interceptor - Token added
- Response interceptor - Received response from: /locations
- Response interceptor - Status: 200
- Response interceptor - Data type: object
- Response interceptor - Is Blob? false
- Response interceptor - Data constructor: Array
- Response interceptor - Response type config: undefined
- Response interceptor - Returning response as-is
- [Frontend] Locations response: 1 locations
- [Frontend] Fetching bank accounts for location: fe7a8809-db2d-42b6-86d0-583114ecedf4
- Request interceptor - Making request to: /invoices/bank-accounts Method: get
- Request interceptor - ResponseType: undefined
- Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {
-    "locationId": "fe7a8809-db2d-42b6-86d0-583114ecedf4"
-  },
-  "method": "get",
-  "url": "/invoices/bank-accounts",
-  "allowAbsoluteUrls": true
-}
- Request interceptor - Token added
-:4000/api/v1/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
- Response interceptor - Error occurred: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Request failed with status code 403
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Error code: ERR_BAD_REQUEST
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Error details: Object
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Failed to fetch brandings: 
-error @ 7ef20_next_dist_6b5aa1c0._.js:3128
- Response interceptor - Received response from: /locations
-forward-logs-shared.ts:95 Response interceptor - Status: 200
-forward-logs-shared.ts:95 Response interceptor - Data type: object
-forward-logs-shared.ts:95 Response interceptor - Is Blob? false
-forward-logs-shared.ts:95 Response interceptor - Data constructor: Array
-forward-logs-shared.ts:95 Response interceptor - Response type config: undefined
-forward-logs-shared.ts:95 Response interceptor - Returning response as-is
-forward-logs-shared.ts:95 [Frontend] Locations response: 1 locations
-forward-logs-shared.ts:95 [Frontend] Fetching transport agents for location: fe7a8809-db2d-42b6-86d0-583114ecedf4
-forward-logs-shared.ts:95 Request interceptor - Making request to: /invoices/transport-agents Method: get
-forward-logs-shared.ts:95 Request interceptor - ResponseType: undefined
-forward-logs-shared.ts:95 Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "params": {
-    "locationId": "fe7a8809-db2d-42b6-86d0-583114ecedf4"
-  },
-  "method": "get",
-  "url": "/invoices/transport-agents",
-  "allowAbsoluteUrls": true
-}
-forward-logs-shared.ts:95 Request interceptor - Token added
-forward-logs-shared.ts:95 Response interceptor - Received response from: /invoices/transport-agents
-forward-logs-shared.ts:95 Response interceptor - Status: 200
-forward-logs-shared.ts:95 Response interceptor - Data type: object
-forward-logs-shared.ts:95 Response interceptor - Is Blob? false
-forward-logs-shared.ts:95 Response interceptor - Data constructor: Array
-forward-logs-shared.ts:95 Response interceptor - Response type config: undefined
-forward-logs-shared.ts:95 Response interceptor - Returning response as-is
-forward-logs-shared.ts:95 [Frontend] Transport agents response: 1 agents
-forward-logs-shared.ts:95 Response interceptor - Received response from: /invoices/bank-accounts
-forward-logs-shared.ts:95 Response interceptor - Status: 200
-forward-logs-shared.ts:95 Response interceptor - Data type: object
-forward-logs-shared.ts:95 Response interceptor - Is Blob? false
-forward-logs-shared.ts:95 Response interceptor - Data constructor: Array
-forward-logs-shared.ts:95 Response interceptor - Response type config: undefined
-forward-logs-shared.ts:95 Response interceptor - Returning response as-is
-forward-logs-shared.ts:95 [Frontend] Bank accounts response: 3 accounts
-forward-logs-shared.ts:95 Response interceptor - Received response from: /invoices/settings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4
-forward-logs-shared.ts:95 Response interceptor - Status: 200
-forward-logs-shared.ts:95 Response interceptor - Data type: object
-forward-logs-shared.ts:95 Response interceptor - Is Blob? false
-forward-logs-shared.ts:95 Response interceptor - Data constructor: Object
-forward-logs-shared.ts:95 Response interceptor - Response type config: undefined
-forward-logs-shared.ts:95 Response interceptor - Unwrapping data property
-forward-logs-shared.ts:95 Response interceptor - Received response from: /invoices/transport-agents
-forward-logs-shared.ts:95 Response interceptor - Status: 200
-forward-logs-shared.ts:95 Response interceptor - Data type: object
-forward-logs-shared.ts:95 Response interceptor - Is Blob? false
-forward-logs-shared.ts:95 Response interceptor - Data constructor: Array
-forward-logs-shared.ts:95 Response interceptor - Response type config: undefined
-forward-logs-shared.ts:95 Response interceptor - Returning response as-is
-forward-logs-shared.ts:95 [Frontend] Transport agents response: 1 agents
-forward-logs-shared.ts:95 Request interceptor - Making request to: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Method: post
-forward-logs-shared.ts:95 Request interceptor - ResponseType: undefined
-forward-logs-shared.ts:95 Request interceptor - Full config: {
-  "transitional": {
-    "silentJSONParsing": true,
-    "forcedJSONParsing": true,
-    "clarifyTimeoutError": false,
-    "legacyInterceptorReqResOrdering": true
-  },
-  "adapter": [
-    "xhr",
-    "http",
-    "fetch"
-  ],
-  "transformRequest": [
-    null
-  ],
-  "transformResponse": [
-    null
-  ],
-  "timeout": 0,
-  "xsrfCookieName": "XSRF-TOKEN",
-  "xsrfHeaderName": "X-XSRF-TOKEN",
-  "maxContentLength": -1,
-  "maxBodyLength": -1,
-  "env": {},
-  "headers": {
-    "Accept": "application/json, text/plain, */*",
-    "Content-Type": "application/json"
-  },
-  "baseURL": "http://localhost:4000/api/v1",
-  "method": "post",
-  "url": "/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4",
-  "data": {
-    "name": "Calcubill",
-    "businessName": "Calcubill",
-    "companyTagline": "#weinnovate",
-    "address": "G2,Arsha Grand, Right Grand City, KInathukadavu",
-    "city": "Coimbatore",
-    "state": "Tamil Nadu",
-    "pincode": "625019",
-    "phone": "8608084220",
-    "email": "contact@calcubill.in",
-    "website": "www.calcubill.in",
-    "gstNumber": "812EFEBHB2U42H",
-    "panNumber": "BNDPY7721H",
-    "cinNumber": "URHU3J89U0294",
-    "logoPosition": "left",
-    "logoWidth": 150,
-    "primaryColor": "#1e40af",
-    "accentColor": "#3b82f6",
-    "signatureText": "Authorized Signatory",
-    "isDefault": true
-  },
-  "allowAbsoluteUrls": true
-}
-forward-logs-shared.ts:95 Request interceptor - Token added
-:4000/api/v1/invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
-intercept-console-error.ts:42 Response interceptor - Error occurred: /invoices/brandings/locations/fe7a8809-db2d-42b6-86d0-583114ecedf4 Request failed with status code 403
-error @ intercept-console-error.ts:42
-intercept-console-error.ts:42 Response interceptor - Error code: ERR_BAD_REQUEST
-error @ intercept-console-error.ts:42
-intercept-console-error.ts:42 Response interceptor - Error details: Object
-error @ intercept-console-error.ts:42
-intercept-console-error.ts:42 Failed to save branding: AxiosError: Request failed with status code 403
-    at settle (settle.js:19:12)
-    at XMLHttpRequest.onloadend (xhr.js:59:13)
-    at Axios.request (Axios.js:46:41)
-    at async handleSubmit (branding-modal.tsx:103:9)
-error @ intercept-console-error.ts:42
-forward-logs-shared.ts:95 [Fast Refresh] rebuilding
-forward-logs-shared.ts:95 [Fast Refresh] done in 341ms
+d36d63b6ec0cdec7.js:1 Request interceptor - Token added
+d36d63b6ec0cdec7.js:1 Response interceptor - Received response from: /invoices/dashboard
+d36d63b6ec0cdec7.js:1 Response interceptor - Status: 200
+d36d63b6ec0cdec7.js:1 Response interceptor - Data type: object
+d36d63b6ec0cdec7.js:1 Response interceptor - Is Blob? false
+d36d63b6ec0cdec7.js:1 Response interceptor - Data constructor: Object
+d36d63b6ec0cdec7.js:1 Response interceptor - Response type config: undefined
+d36d63b6ec0cdec7.js:1 Response interceptor - Unwrapping data property
+billingwoodserver.onrender.com/api/v1/invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/pdf:1  Failed to load resource: the server responded with a status of 500 ()
+d36d63b6ec0cdec7.js:1 Response interceptor - Error occurred: /invoices/7061d347-95d0-48d6-8cc4-1a518eaa5b94/pdf Request failed with status code 500
+(anonymous) @ d36d63b6ec0cdec7.js:1
+d36d63b6ec0cdec7.js:1 Response interceptor - Error code: ERR_BAD_RESPONSE
+(anonymous) @ d36d63b6ec0cdec7.js:1
+d36d63b6ec0cdec7.js:1 Response interceptor - Error details: Object
+(anonymous) @ d36d63b6ec0cdec7.js:1
+35bd038aa9511784.js:1 InvoicePreviewModal - Fetch error: AxiosError: Request failed with status code 500
+    at ex (d36d63b6ec0cdec7.js:1:39721)
+    at XMLHttpRequest.b (d36d63b6ec0cdec7.js:1:44092)
+    at tt.request (d36d63b6ec0cdec7.js:1:52526)
+(anonymous) @ 35bd038aa9511784.js:1
+35bd038aa9511784.js:1 InvoicePreviewModal - Closing modal

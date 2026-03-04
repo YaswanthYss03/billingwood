@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/services/prisma.service';
 import { InvoiceSettingsResolver } from './invoice-settings-resolver.service';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 
 interface InvoiceData {
   invoice: any;
@@ -129,9 +130,18 @@ export class InvoicePdfService {
 
     // Generate PDF using Puppeteer
     console.log('Launching browser for PDF generation...');
+    
+    // Use chromium for serverless/cloud environments (Render, Vercel, Lambda, etc.)
+    const isProduction = process.env.NODE_ENV === 'production';
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: isProduction 
+        ? chromium.args 
+        : ['--no-sandbox', '--disable-setuid-sandbox'],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: isProduction 
+        ? await chromium.executablePath() 
+        : process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+      headless: chromium.headless,
     });
 
     try {
