@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, Download, TrendingUp, DollarSign, AlertCircle, FileText, Calendar, Loader2 } from 'lucide-react';
+import { Eye, Download, TrendingUp, DollarSign, AlertCircle, FileText, Calendar, Loader2, Edit2, CreditCard, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
 import { InvoicePreviewModal } from '@/components/invoice-preview-modal';
@@ -470,45 +470,50 @@ export default function InvoicesPage() {
                         {invoice.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <div className="flex justify-end items-center gap-1">
                         <Link
                           href={`/invoices/${invoice.id}`}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                          title="View Invoice"
                         >
-                          View
+                          <ExternalLink className="w-4 h-4" />
                         </Link>
                         {invoice.status === 'DRAFT' && (
                           <Link
                             href={`/invoices/${invoice.id}/edit`}
-                            className="text-green-600 hover:text-green-900"
+                            className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                            title="Edit Invoice"
                           >
-                            Edit
+                            <Edit2 className="w-4 h-4" />
                           </Link>
                         )}
                         <button
                           onClick={() => setPreviewInvoiceId(invoice.id)}
-                          className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
+                          className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                           title="Preview PDF"
                         >
                           <Eye className="w-4 h-4" />
-                          <span className="hidden sm:inline">Preview</span>
                         </button>
                         <button
                           onClick={() => handleDownloadPDF(invoice.id)}
                           disabled={downloadingId === invoice.id}
-                          className="text-purple-600 hover:text-purple-900 flex items-center gap-1 disabled:opacity-50"
+                          className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Download PDF"
                         >
-                          {downloadingId === invoice.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                          <span className="hidden sm:inline">{downloadingId === invoice.id ? 'Downloading...' : 'Download'}</span>
+                          {downloadingId === invoice.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4" />
+                          )}
                         </button>
                         {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
                           <Link
                             href={`/invoices/${invoice.id}/payment`}
-                            className="text-yellow-600 hover:text-yellow-900"
+                            className="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
+                            title="Record Payment"
                           >
-                            Payment
+                            <CreditCard className="w-4 h-4" />
                           </Link>
                         )}
                       </div>

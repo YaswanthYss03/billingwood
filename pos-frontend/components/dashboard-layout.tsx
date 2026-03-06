@@ -236,6 +236,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         }
       }
 
+      // Filter Tables - only for RESTAURANT, HOTEL, CAFE business types
+      if (page.path === '/tables') {
+        const allowedTypes = ['RESTAURANT', 'HOTEL', 'CAFE'];
+        if (!tenant?.businessType || !allowedTypes.includes(tenant.businessType)) {
+          return false;
+        }
+      }
+
+      // Filter Ingredients - only for RESTAURANT, HOTEL, CAFE business types
+      if (page.path === '/ingredients') {
+        const allowedTypes = ['RESTAURANT', 'HOTEL', 'CAFE'];
+        if (!tenant?.businessType || !allowedTypes.includes(tenant.businessType)) {
+          return false;
+        }
+      }
+
       // Filter Invoices - only for RETAIL business type
       if (page.path === '/invoices') {
         if (!tenant?.businessType || tenant.businessType !== 'RETAIL') {
